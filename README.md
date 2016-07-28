@@ -1,5 +1,3 @@
-# SlimeSoccerGame
-
 # Setting up Eclipse
 
 To develop your application via Eclipse, you need to install the following pieces of software.
@@ -18,8 +16,9 @@ Eclipse Integration Gradle, use this update site: http://dist.springsource.com/s
 
 Add file local.properties with the text:
 
-"# Location of the android SDK
-sdk.dir=C:/Users/ecurri3/..."
+	# Location of the android SDK
+	sdk.dir=C:/Users/ecurri3/...
+Important to use '/' and not '\'
 
 Import into Eclipse
 
