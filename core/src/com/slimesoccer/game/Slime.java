@@ -15,7 +15,7 @@ public class Slime {
 	public FixtureDef fixtureDef;
 	
 	public float maxSpeed = 3f;
-	boolean airborne = false;
+	public boolean airborne = true;
 	
 	public Slime(String path){
 		texture = new Texture(path);
@@ -23,8 +23,8 @@ public class Slime {
 		
 		bodyDef = new BodyDef();
 		bodyDef.type = BodyDef.BodyType.DynamicBody;
-		bodyDef.position.set((sprite.getX() + sprite.getWidth() / 2) / MainGameClass.PIXELS_TO_METERS,
-				(sprite.getY() + sprite.getHeight() / 2) / MainGameClass.PIXELS_TO_METERS);
+		bodyDef.position.set((sprite.getX() + sprite.getWidth() / 2) / MainGameClass.PIXELS_TO_METERS - 2f,
+							(sprite.getY() + sprite.getHeight() / 2) / MainGameClass.PIXELS_TO_METERS - 2f);
 		bodyDef.fixedRotation = true;
 	}
 	

@@ -12,6 +12,10 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 
 public class MainGameClass extends ApplicationAdapter implements InputProcessor {
@@ -32,7 +36,8 @@ public class MainGameClass extends ApplicationAdapter implements InputProcessor 
 	float torque = 0.0f;
 	boolean drawSprite = true;
 	boolean keyPressed_D = false, 
-			keyPressed_A = false;
+			keyPressed_A = false,
+			keyPressed_Space = false;
 
 	public static float PIXELS_TO_METERS = 100f;
 
@@ -51,6 +56,7 @@ public class MainGameClass extends ApplicationAdapter implements InputProcessor 
 		slime.setProperties();
 		slimeBody.createFixture(slime.fixtureDef);
 		slime.shape.dispose();
+		slimeBody.setUserData("slime");
 
 		/* BALL */
 		
@@ -59,6 +65,7 @@ public class MainGameClass extends ApplicationAdapter implements InputProcessor 
 		ball.setProperties();
 		ballBody.createFixture(ball.fixtureDef);
 		ball.shape.dispose();
+		ballBody.setUserData("ball");
 		
 		slime.sprite.setPosition(-slime.sprite.getWidth() / 2, -slime.sprite.getHeight() / 2);
 		ball.sprite.setPosition(-ball.sprite.getWidth() / 2, -ball.sprite.getHeight() / 2);
@@ -72,6 +79,10 @@ public class MainGameClass extends ApplicationAdapter implements InputProcessor 
 			bodyEdgeScreen = world.createBody(boundaries[i].bodyDef);
 			bodyEdgeScreen.createFixture(boundaries[i].fixtureDef);
 			boundaries[i].shape.dispose();
+			
+			if(i==0){
+				bodyEdgeScreen.setUserData("ground");
+			}
 		}
 
 		Gdx.input.setInputProcessor(this);
@@ -87,11 +98,54 @@ public class MainGameClass extends ApplicationAdapter implements InputProcessor 
 		slimeBody.applyTorque(torque, true);
 		ballBody.applyTorque(torque, true);
 		
+		world.setContactListener(new ContactListener() {
+
+			@Override
+			public void beginContact(Contact contact) {
+				if((contact.getFixtureA().getBody().getUserData() == "ground" &&
+				   contact.getFixtureB().getBody().getUserData() == "slime") ||
+				   (contact.getFixtureA().getBody().getUserData() == "slime" &&
+				   contact.getFixtureB().getBody().getUserData() == "ground")){
+					slime.airborne = false;
+				}
+				
+			}
+
+			@Override
+			public void endContact(Contact contact) {
+				if((contact.getFixtureA().getBody().getUserData() == "ground" &&
+				   contact.getFixtureB().getBody().getUserData() == "slime") ||
+				   (contact.getFixtureA().getBody().getUserData() == "slime" &&
+				   contact.getFixtureB().getBody().getUserData() == "ground")){
+					slime.airborne = true;
+				}
+				
+			}
+
+			@Override
+			public void preSolve(Contact contact, Manifold oldManifold) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void postSolve(Contact contact, ContactImpulse impulse) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
+		
+		Gdx.app.log("airborne", "" + slime.airborne);
+		
 		if(keyPressed_A && slimeBody.getLinearVelocity().x > -slime.maxSpeed){
 			slimeBody.applyLinearImpulse(-0.80f/PIXELS_TO_METERS, 0, slimeBody.getPosition().x, slimeBody.getPosition().y, true);
 		}
 		if(keyPressed_D && slimeBody.getLinearVelocity().x < slime.maxSpeed){
 			slimeBody.applyLinearImpulse(0.80f/PIXELS_TO_METERS, 0, slimeBody.getPosition().x, slimeBody.getPosition().y, true);
+		}
+		if(keyPressed_Space && !slime.airborne){
+			slimeBody.applyLinearImpulse(0, 1.00f/PIXELS_TO_METERS, slimeBody.getPosition().x, slimeBody.getPosition().y, true);
 		}
 
 		slime.sprite.setPosition((slimeBody.getPosition().x * PIXELS_TO_METERS) - slime.sprite.getWidth() / 2,
@@ -135,6 +189,9 @@ public class MainGameClass extends ApplicationAdapter implements InputProcessor 
 		if (keycode == Input.Keys.A){
 			keyPressed_A = true;
 		}
+		if (keycode == Input.Keys.SPACE){
+			keyPressed_Space = true;
+		}
 
 		return false;
 	}
@@ -146,6 +203,9 @@ public class MainGameClass extends ApplicationAdapter implements InputProcessor 
 		}
 		if (keycode == Input.Keys.A){
 			keyPressed_A = false;
+		}
+		if (keycode == Input.Keys.SPACE){
+			keyPressed_Space = false;
 		}
 		return false;
 	}
