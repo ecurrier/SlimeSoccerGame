@@ -11,11 +11,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.EdgeShape;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 public class MainGameClass extends ApplicationAdapter implements InputProcessor {
@@ -24,6 +20,7 @@ public class MainGameClass extends ApplicationAdapter implements InputProcessor 
 
 	Slime slime;
 	Ball ball;
+	Boundary[] boundaries = new Boundary[4];
 
 	World world;
 	Body slimeBody, ballBody;
@@ -65,74 +62,17 @@ public class MainGameClass extends ApplicationAdapter implements InputProcessor 
 		
 		slime.sprite.setPosition(-slime.sprite.getWidth() / 2, -slime.sprite.getHeight() / 2);
 		ball.sprite.setPosition(-ball.sprite.getWidth() / 2, -ball.sprite.getHeight() / 2);
-
-		/* GROUND */
-
-		BodyDef bodyDef2 = new BodyDef();
-		bodyDef2.type = BodyDef.BodyType.StaticBody;
-		float w = Gdx.graphics.getWidth() / PIXELS_TO_METERS;
-		float h = Gdx.graphics.getHeight() / PIXELS_TO_METERS - 50 / PIXELS_TO_METERS;
-		bodyDef2.position.set(0, 0);
-		FixtureDef fixtureDef2 = new FixtureDef();
-
-		EdgeShape edgeShape = new EdgeShape();
-		edgeShape.set(-w / 2, -h / 2, w / 2, -h / 2);
-		fixtureDef2.shape = edgeShape;
-
-		bodyEdgeScreen = world.createBody(bodyDef2);
-		bodyEdgeScreen.createFixture(fixtureDef2);
-		edgeShape.dispose();
 		
-		/* LEFT WALL */
+		/* BOUNDARIES */
 		
-		BodyDef bodyDef3 = new BodyDef();
-		bodyDef3.type = BodyDef.BodyType.StaticBody;
-		float w3 = Gdx.graphics.getWidth() / PIXELS_TO_METERS - 50 / PIXELS_TO_METERS;
-		float h3 = Gdx.graphics.getHeight() / PIXELS_TO_METERS;
-		bodyDef3.position.set(0, 0);
-		FixtureDef fixtureDef3 = new FixtureDef();
-
-		EdgeShape edgeShape3 = new EdgeShape();
-		edgeShape3.set(-w3 / 2, -h3 / 2, -w3 / 2, h3 / 2);
-		fixtureDef3.shape = edgeShape3;
-
-		bodyEdgeScreen = world.createBody(bodyDef3);
-		bodyEdgeScreen.createFixture(fixtureDef3);
-		edgeShape3.dispose();
-		
-		/* RIGHT WALL */
-		
-		BodyDef bodyDef4 = new BodyDef();
-		bodyDef4.type = BodyDef.BodyType.StaticBody;
-		float w4 = -Gdx.graphics.getWidth() / PIXELS_TO_METERS + 50 / PIXELS_TO_METERS;
-		float h4 = Gdx.graphics.getHeight() / PIXELS_TO_METERS;
-		bodyDef4.position.set(0, 0);
-		FixtureDef fixtureDef4 = new FixtureDef();
-
-		EdgeShape edgeShape4 = new EdgeShape();
-		edgeShape4.set(-w4 / 2, -h4 / 2, -w4 / 2, h4 / 2);
-		fixtureDef4.shape = edgeShape4;
-
-		bodyEdgeScreen = world.createBody(bodyDef4);
-		bodyEdgeScreen.createFixture(fixtureDef4);
-		edgeShape4.dispose();
-		
-		/* TOP WALL */
-		
-		BodyDef bodyDef5 = new BodyDef();
-		bodyDef5.type = BodyDef.BodyType.StaticBody;
-		float w5 = Gdx.graphics.getWidth() / PIXELS_TO_METERS;
-		float h5 = - Gdx.graphics.getHeight() / PIXELS_TO_METERS + 50 / PIXELS_TO_METERS;;
-		bodyDef5.position.set(0, 0);
-		FixtureDef fixtureDef5 = new FixtureDef();
-
-		EdgeShape edgeShape5 = new EdgeShape();
-		edgeShape5.set(-w5 / 2, -h5 / 2, w5 / 2, -h5 / 2);
-		fixtureDef5.shape = edgeShape4;
-
-		bodyEdgeScreen = world.createBody(bodyDef5);
-		bodyEdgeScreen.createFixture(fixtureDef5);
-		edgeShape5.dispose();
+		for(int i=0; i < 4; i++){
+			boundaries[i] = new Boundary();
+			boundaries[i].setProperties(i);
+			
+			bodyEdgeScreen = world.createBody(boundaries[i].bodyDef);
+			bodyEdgeScreen.createFixture(boundaries[i].fixtureDef);
+			boundaries[i].shape.dispose();
+		}
 
 		Gdx.input.setInputProcessor(this);
 		debugRenderer = new Box2DDebugRenderer();
@@ -147,10 +87,10 @@ public class MainGameClass extends ApplicationAdapter implements InputProcessor 
 		slimeBody.applyTorque(torque, true);
 		ballBody.applyTorque(torque, true);
 		
-		if(keyPressed_A){
+		if(keyPressed_A && slimeBody.getLinearVelocity().x > -slime.maxSpeed){
 			slimeBody.applyLinearImpulse(-0.80f/PIXELS_TO_METERS, 0, slimeBody.getPosition().x, slimeBody.getPosition().y, true);
 		}
-		if(keyPressed_D){
+		if(keyPressed_D && slimeBody.getLinearVelocity().x < slime.maxSpeed){
 			slimeBody.applyLinearImpulse(0.80f/PIXELS_TO_METERS, 0, slimeBody.getPosition().x, slimeBody.getPosition().y, true);
 		}
 

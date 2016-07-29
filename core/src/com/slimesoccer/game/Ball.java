@@ -14,7 +14,7 @@ public class Ball {
 	public PolygonShape shape;
 	public FixtureDef fixtureDef;
 	
-	public float maxSpeed = 15;
+	public float maxSpeed = 10f;
 	
 	public Ball(String path){
 		texture = new Texture(path);
@@ -24,7 +24,6 @@ public class Ball {
 		bodyDef.type = BodyDef.BodyType.DynamicBody;
 		bodyDef.position.set((sprite.getX() + sprite.getWidth() / 2) / MainGameClass.PIXELS_TO_METERS,
 				(sprite.getY() + sprite.getHeight() / 2) / MainGameClass.PIXELS_TO_METERS);
-		bodyDef.fixedRotation = true;
 	}
 	
 	public void createShape(){
@@ -44,6 +43,6 @@ public class Ball {
 		fixtureDef = new FixtureDef();
 		fixtureDef.shape = shape;
 		fixtureDef.density = 0.1f;
-		fixtureDef.restitution = 0.9f;
+		fixtureDef.restitution = 0.75f;
 	}
 }

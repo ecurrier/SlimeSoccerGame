@@ -14,7 +14,7 @@ public class Slime {
 	public PolygonShape shape;
 	public FixtureDef fixtureDef;
 	
-	public float maxSpeed = 5;
+	public float maxSpeed = 3f;
 	boolean airborne = false;
 	
 	public Slime(String path){
