@@ -101,9 +101,16 @@ public class MainGameClass extends ApplicationAdapter {
         
         PolygonShape ballShape = new PolygonShape();
         
-        //float[] ballVertices = {};
-        //ballShape.set(ballVertices);
-        ballShape.setAsBox(ballSprite.getWidth()/2 / PIXELS_TO_METERS, ballSprite.getHeight()/2 / PIXELS_TO_METERS);
+        float[] ballVertices = {-0.075f, 0f,
+								-0.05f, 0.05f,
+								0f, 0.075f,
+								0.05f, 0.05f,
+								0.075f, 0f,
+								0.05f, -0.025f,
+								0f, -0.075f,
+								-0.05f, -0.05f};
+        
+        ballShape.set(ballVertices);
         
         FixtureDef ballFixtureDef = new FixtureDef();
         ballFixtureDef.shape = shape;
