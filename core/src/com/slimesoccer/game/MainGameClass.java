@@ -4,10 +4,8 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Circle;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class MainGameClass extends ApplicationAdapter {
 	SpriteBatch batch;
@@ -72,20 +70,20 @@ public class MainGameClass extends ApplicationAdapter {
 	}
 	
 	public void checkOverlap() {
-		Circle slimeBounds = new Circle((int)slime.getX() + ((int)slime.actor.getWidth()/2), (int)slime.getY() + ((int)slime.actor.getHeight()/2), (int)slime.actor.getHeight());
+		Circle slimeBounds = new Circle((int)slime.getX() + ((int)slime.actor.getWidth()/2), (int)slime.getY(), (int)slime.actor.getHeight());
 		Circle ballBounds = new Circle((int)ball.getX() + ((int)ball.actor.getWidth()/2), (int)ball.getY() + ((int)ball.actor.getHeight()/2), (int)ball.actor.getHeight()/2);
 		
-		if(slimeBounds.overlaps(ballBounds)) {
+		float xD = slime.getX() - ball.getX();
+		float yD = slime.getY() - ball.getY();
+		float sqDist = xD * xD + yD * yD;
+		boolean collision = sqDist <= (slimeBounds.radius + ballBounds.radius) * (slimeBounds.radius + ballBounds.radius);
+		
+		if(collision) {
+			ball.speedX = ball.speedX * -0.75f;
+			ball.speedY = ball.speedY * -0.75f;
+			
 			ball.speedX += slime.speedX * 0.5f;
 			ball.speedY += slime.speedY * 0.5f;
-			
-			if(slime.speedX == 0){
-				ball.speedX = ball.speedX * -0.75f;
-			}
-			
-			if(slime.speedY == 0){
-				ball.speedY = ball.speedY * -0.75f;
-			}
 		}
 	}
 }

@@ -1,6 +1,5 @@
 package com.slimesoccer.game;
 
-import com.badlogic.gdx.Gdx;
 
 public class Physics {
 	
@@ -27,8 +26,6 @@ public class Physics {
 		else if(slime.speedX < -slime.maxSpeed) {
 			slime.speedX = -slime.maxSpeed;
 		}
-		
-		Gdx.app.log("SpeedX", "" + slime.speedX);
 	}
 
 	public void applyPhysics(Ball ball) {
