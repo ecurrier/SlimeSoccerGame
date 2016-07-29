@@ -25,14 +25,14 @@ import com.badlogic.gdx.physics.box2d.World;
 
 public class MainGameClass extends ApplicationAdapter {
 	SpriteBatch batch;
-	Sprite sprite;
+	Sprite sprite, ballSprite;
 	
 	Physics physics;
 	Slime slime;
 	Ball ball;
 	
     World world;
-    Body body;
+    Body slimeBody, ballBody;
     Body bodyEdgeScreen;
     Box2DDebugRenderer debugRenderer;
     Matrix4 debugMatrix;
@@ -53,8 +53,13 @@ public class MainGameClass extends ApplicationAdapter {
 		
         sprite = new Sprite(slime.texture);
         sprite.setPosition(-sprite.getWidth()/2,-sprite.getHeight()/2);
+        
+        ballSprite = new Sprite(ball.texture);
+        ballSprite.setPosition(-ballSprite.getWidth()/2, -ballSprite.getHeight()/2);
 
         world = new World(new Vector2(0, -2f),true);
+        
+        /* SLIME */
 
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
@@ -62,17 +67,10 @@ public class MainGameClass extends ApplicationAdapter {
                         PIXELS_TO_METERS,
                 (sprite.getY() + sprite.getHeight()/2) / PIXELS_TO_METERS);
 
-        body = world.createBody(bodyDef);
+        slimeBody = world.createBody(bodyDef);
 
         PolygonShape shape = new PolygonShape();
-        //shape.setAsBox(sprite.getWidth()/2 / PIXELS_TO_METERS, sprite.getHeight()
-        //        /2 / PIXELS_TO_METERS);
         
-        /*float[] vertices = {-0.3f, -0.15f,
-        					-0.3f, 0.15f,
-        					0.3f, 0.15f,
-        					0.3f, -0.15f};
-        */
         float[] vertices = {-0.3f, -0.15f,
         					-0.28f, -0.05f,
         					-0.2f, 0.05f,
@@ -89,9 +87,34 @@ public class MainGameClass extends ApplicationAdapter {
         fixtureDef.density = 0.1f;
         fixtureDef.restitution = 0.0f;
 
-        body.createFixture(fixtureDef);
+        slimeBody.createFixture(fixtureDef);
         shape.dispose();
+        
+        /* BALL */
+        
+        BodyDef ballDef = new BodyDef();
+        ballDef.type = BodyDef.BodyType.DynamicBody;
+        ballDef.position.set((ballSprite.getX() + ballSprite.getWidth()/2) / PIXELS_TO_METERS,
+        					 (ballSprite.getY() + ballSprite.getHeight()/2) / PIXELS_TO_METERS);
+        
+        ballBody = world.createBody(ballDef);
+        
+        PolygonShape ballShape = new PolygonShape();
+        
+        //float[] ballVertices = {};
+        //ballShape.set(ballVertices);
+        ballShape.setAsBox(ballSprite.getWidth()/2 / PIXELS_TO_METERS, ballSprite.getHeight()/2 / PIXELS_TO_METERS);
+        
+        FixtureDef ballFixtureDef = new FixtureDef();
+        ballFixtureDef.shape = shape;
+        ballFixtureDef.density = 0.1f;
+        ballFixtureDef.restitution = 0.9f;
+        
+        ballBody.createFixture(ballFixtureDef);
+        ballShape.dispose();
 
+        /* GROUND */
+        
         BodyDef bodyDef2 = new BodyDef();
         bodyDef2.type = BodyDef.BodyType.StaticBody;
         float w = Gdx.graphics.getWidth()/PIXELS_TO_METERS;
@@ -106,6 +129,10 @@ public class MainGameClass extends ApplicationAdapter {
         bodyEdgeScreen = world.createBody(bodyDef2);
         bodyEdgeScreen.createFixture(fixtureDef2);
         edgeShape.dispose();
+        
+        
+        
+        
 
         debugRenderer = new Box2DDebugRenderer();
         camera = new OrthographicCamera(Gdx.graphics.getWidth(),Gdx.graphics.
@@ -150,14 +177,21 @@ public class MainGameClass extends ApplicationAdapter {
         // Step the physics simulation forward at a rate of 60hz
         world.step(1f/60f, 6, 2);
 
-        body.applyTorque(torque,true);
+        slimeBody.applyTorque(torque,true);
+        ballBody.applyTorque(torque, true);
 
-        sprite.setPosition((body.getPosition().x * PIXELS_TO_METERS) - sprite.
+        sprite.setPosition((slimeBody.getPosition().x * PIXELS_TO_METERS) - sprite.
                         getWidth()/2 ,
-                (body.getPosition().y * PIXELS_TO_METERS) -sprite.getHeight()/2 )
+                (slimeBody.getPosition().y * PIXELS_TO_METERS) -sprite.getHeight()/2 )
         ;
-        sprite.setRotation((float)Math.toDegrees(body.getAngle()));
-
+        sprite.setRotation((float)Math.toDegrees(slimeBody.getAngle()));
+        
+        ballSprite.setPosition((ballBody.getPosition().x * PIXELS_TO_METERS) - ballSprite.
+                getWidth()/2 ,
+        (ballBody.getPosition().y * PIXELS_TO_METERS) -ballSprite.getHeight()/2 )
+        ;
+        ballSprite.setRotation((float)Math.toDegrees(ballBody.getAngle()));
+        
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -166,11 +200,15 @@ public class MainGameClass extends ApplicationAdapter {
                 PIXELS_TO_METERS, 0);
         batch.begin();
 
-        if(drawSprite)
-            batch.draw(sprite, sprite.getX(), sprite.getY(),sprite.getOriginX(),
-                    sprite.getOriginY(),
-                    sprite.getWidth(),sprite.getHeight(),sprite.getScaleX(),sprite.
-                            getScaleY(),sprite.getRotation());
+        batch.draw(sprite, sprite.getX(), sprite.getY(),sprite.getOriginX(),
+                sprite.getOriginY(),
+                sprite.getWidth(),sprite.getHeight(),sprite.getScaleX(),sprite.
+                        getScaleY(),sprite.getRotation());
+        
+        batch.draw(ballSprite, ballSprite.getX(), ballSprite.getY(),ballSprite.getOriginX(),
+        		ballSprite.getOriginY(),
+        		ballSprite.getWidth(),ballSprite.getHeight(),ballSprite.getScaleX(),ballSprite.
+                        getScaleY(),ballSprite.getRotation());
 
         batch.end();
         debugRenderer.render(world, debugMatrix);
