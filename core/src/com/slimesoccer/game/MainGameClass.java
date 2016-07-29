@@ -13,7 +13,6 @@ public class MainGameClass extends ApplicationAdapter {
 	Physics physics;
 	Slime slime;
 	Ball ball;
-	//sdfghdfshhdsff
 	
 	@Override
 	public void create () {
