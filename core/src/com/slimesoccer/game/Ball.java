@@ -1,53 +1,49 @@
 package com.slimesoccer.game;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 
 public class Ball {
 
 	public Texture texture;
-	public Actor actor;
-	public float speedX = 0;
-	public float speedY = 0;
+	public Sprite sprite;
+	public BodyDef bodyDef;
+	public PolygonShape shape;
+	public FixtureDef fixtureDef;
+	
 	public float maxSpeed = 15;
 	
-	public Ball(String path, int x, int y){
+	public Ball(String path){
 		texture = new Texture(path);
-		actor = new Actor();
-		actor.setBounds(x, y, texture.getWidth(), texture.getHeight());
-	}
-	
-	/* ------ SETTERS ------- */
-	public void setX(float x){
-		actor.setX(x);
-	}
-	
-	public void setY(float y){
-		actor.setY(y);
-	}
-	
-	/* ------- GETTERS ------- */
-	public float getX(){
-		return actor.getX();
-	}
-	
-	public float getY(){
-		return actor.getY();
-	}
-	
-	public void checkBoundaries(){
-		if(getY() < 0.0) {
-			setY(0);
-			speedY = speedY * -0.75f;
-		}
+		sprite = new Sprite(texture);
 		
-		if(actor.getX() < 0.0) {
-			actor.setX(0);
-			speedX = speedX * -0.75f;
-		}
-		else if(actor.getX() > 625) {
-			actor.setX(625);
-			speedX = speedX * -0.75f;
-		}
+		bodyDef = new BodyDef();
+		bodyDef.type = BodyDef.BodyType.DynamicBody;
+		bodyDef.position.set((sprite.getX() + sprite.getWidth() / 2) / MainGameClass.PIXELS_TO_METERS,
+				(sprite.getY() + sprite.getHeight() / 2) / MainGameClass.PIXELS_TO_METERS);
+		bodyDef.fixedRotation = true;
+	}
+	
+	public void createShape(){
+		shape = new PolygonShape();
+		float[] vertices = {-0.075f, 0f,
+							-0.05f, 0.05f,
+							0f, 0.075f,
+							0.05f, 0.05f,
+							0.075f, 0f,
+							0.05f, -0.025f,
+							0f, -0.075f,
+							-0.05f, -0.05f };
+		shape.set(vertices);
+	}
+	
+	public void setProperties(){
+		fixtureDef = new FixtureDef();
+		fixtureDef.shape = shape;
+		fixtureDef.density = 0.1f;
+		fixtureDef.restitution = 0.9f;
 	}
 }
