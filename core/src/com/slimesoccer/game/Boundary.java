@@ -48,5 +48,6 @@ public class Boundary {
 			break;
 		}
 		fixtureDef.shape = shape;
+		fixtureDef.friction = 100f;
 	}
 }
