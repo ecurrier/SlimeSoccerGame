@@ -25,9 +25,13 @@ public class MainGameClass extends ApplicationAdapter implements InputProcessor 
 	Slime slime;
 	Ball ball;
 	Boundary[] boundaries = new Boundary[4];
+	Goal goal;
 
 	World world;
-	Body slimeBody, ballBody;
+	Body slimeBody, 
+		ballBody,
+		goalBody;
+	
 	Body bodyEdgeScreen;
 	Box2DDebugRenderer debugRenderer;
 	Matrix4 debugMatrix;
@@ -48,6 +52,7 @@ public class MainGameClass extends ApplicationAdapter implements InputProcessor 
 		
 		slime = new Slime("Models/redslime-right.png");
 		ball = new Ball("Models/soccerball.png");
+		goal = new Goal("Models/goal.png");
 
 		/* SLIME */
 
@@ -84,6 +89,20 @@ public class MainGameClass extends ApplicationAdapter implements InputProcessor 
 				bodyEdgeScreen.setUserData("ground");
 			}
 		}
+		
+		/* GOAL */
+		
+		goalBody = world.createBody(goal.bodyDef_body);
+		goal.createShape();
+		goal.setProperties();
+		goalBody.createFixture(goal.fixtureDef_body);
+		goal.shape_body.dispose();
+		goalBody.setUserData("goal");
+		
+		goalBody = world.createBody(goal.bodyDef_top);
+		goalBody.createFixture(goal.fixtureDef_top);
+		goal.shape_top.dispose();
+		
 
 		Gdx.input.setInputProcessor(this);
 		debugRenderer = new Box2DDebugRenderer();
@@ -136,8 +155,6 @@ public class MainGameClass extends ApplicationAdapter implements InputProcessor 
 			
 		});
 		
-		Gdx.app.log("airborne", "" + slime.airborne);
-		
 		if(keyPressed_A && slimeBody.getLinearVelocity().x > -slime.maxSpeed){
 			slimeBody.applyLinearImpulse(-0.80f/PIXELS_TO_METERS, 0, slimeBody.getPosition().x, slimeBody.getPosition().y, true);
 		}
@@ -169,6 +186,8 @@ public class MainGameClass extends ApplicationAdapter implements InputProcessor 
 		batch.draw(ball.sprite, ball.sprite.getX(), ball.sprite.getY(), ball.sprite.getOriginX(), ball.sprite.getOriginY(),
 				ball.sprite.getWidth(), ball.sprite.getHeight(), ball.sprite.getScaleX(), ball.sprite.getScaleY(),
 				ball.sprite.getRotation());
+		
+		batch.draw(goal.sprite, goal.sprite.getX(), goal.sprite.getY());
 
 		batch.end();
 		debugRenderer.render(world, debugMatrix);
