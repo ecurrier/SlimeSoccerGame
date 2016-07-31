@@ -1,6 +1,7 @@
 package com.slimesoccer.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -19,7 +20,7 @@ public class Goal {
 	public FixtureDef fixtureDef_top;
 	public FixtureDef fixtureDef_body;
 	
-	public Goal(String path, String userDataIdentifier){
+	public Goal(FileHandle path, String userDataIdentifier){
 		texture = new Texture(path);
 		sprite = new Sprite(texture);
 		

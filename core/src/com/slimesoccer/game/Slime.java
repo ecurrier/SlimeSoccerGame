@@ -1,5 +1,6 @@
 package com.slimesoccer.game;
 
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -20,7 +21,7 @@ public class Slime {
 	public float maxSpeed = 2f;
 	public boolean airborne = true;
 	
-	public Slime(String path, float positionOffset){
+	public Slime(FileHandle path, float positionOffset){
 		texture = new Texture(path);
 		sprite = new Sprite(texture);
 		
