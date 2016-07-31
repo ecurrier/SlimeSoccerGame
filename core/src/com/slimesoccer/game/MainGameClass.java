@@ -82,7 +82,7 @@ public class MainGameClass extends ApplicationAdapter{
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
 		controller.checkMovement(player);
-		npc.MoveNpc();
+		npc.MoveNpcHard();
 		player.adjustSpritePosition();
 		computer.adjustSpritePosition();
 		ball.adjustSpritePosition();
@@ -127,6 +127,10 @@ public class MainGameClass extends ApplicationAdapter{
 					player.airborne = false;
 				}
 				
+				if(collision(contact, "ground", "computer")){
+					computer.airborne = false;
+				}
+				
 				if(collision(contact, "ball", "playergoal")){
 					computerScore.incrementScore();
 				}
@@ -140,6 +144,9 @@ public class MainGameClass extends ApplicationAdapter{
 			public void endContact(Contact contact) {
 				if(collision(contact, "ground", "player")){
 					player.airborne = true;
+				}
+				if(collision(contact, "ground", "computer")){
+					computer.airborne = true;
 				}
 				
 			}
