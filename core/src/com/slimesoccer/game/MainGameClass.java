@@ -25,8 +25,10 @@ public class MainGameClass extends ApplicationAdapter{
 	
 	Slime player,
 		computer;
+
 	
 	Ball ball;
+	NpcBrain npc;
 	Boundary[] boundaries = new Boundary[4];
 	Goal playerGoal,
 		computerGoal;
@@ -52,8 +54,15 @@ public class MainGameClass extends ApplicationAdapter{
 		
 		createBallBody();
 		
+<<<<<<< HEAD
+		npc = new NpcBrain(computer,ball);
+		
+		playerGoal = createGoalBody("Models/playergoal.png", "playergoal");
+		computerGoal = createGoalBody("Models/computergoal.png", "computergoal");
+=======
 		playerGoal = createGoalBody(Gdx.files.internal("Models/playergoal.png"), "playergoal");
 		computerGoal = createGoalBody(Gdx.files.internal("Models/computergoal.png"), "computergoal");
+>>>>>>> master
 		
 		createBoundaries();
 		
@@ -77,7 +86,7 @@ public class MainGameClass extends ApplicationAdapter{
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
 		controller.checkMovement(player);
-
+		npc.MoveNpc();
 		player.adjustSpritePosition();
 		computer.adjustSpritePosition();
 		ball.adjustSpritePosition();
