@@ -2,12 +2,12 @@ package com.slimesoccer.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -39,6 +39,9 @@ public class MainGameClass extends ApplicationAdapter{
 	
 	Texture dot;
 	Sprite trajectoryDot;
+	
+	Score playerScore,
+		computerScore;
 
 	@Override
 	public void create() {
@@ -46,15 +49,20 @@ public class MainGameClass extends ApplicationAdapter{
 		batch = new SpriteBatch();
 		controller = new Controller();
 		
-		player = createSlimeBody("Models/redslime-right.png", "player", -2f);
-		computer = createSlimeBody("Models/blueslime-left.png", "computer", 1.25f);
+		player = createSlimeBody(Gdx.files.internal("Models/redslime-right.png"), "player", -2f);
+		computer = createSlimeBody(Gdx.files.internal("Models/blueslime-left.png"), "computer", 1.25f);
 		
 		createBallBody();
 		
+<<<<<<< HEAD
 		npc = new NpcBrain(computer,ball);
 		
 		playerGoal = createGoalBody("Models/playergoal.png", "playergoal");
 		computerGoal = createGoalBody("Models/computergoal.png", "computergoal");
+=======
+		playerGoal = createGoalBody(Gdx.files.internal("Models/playergoal.png"), "playergoal");
+		computerGoal = createGoalBody(Gdx.files.internal("Models/computergoal.png"), "computergoal");
+>>>>>>> master
 		
 		createBoundaries();
 		
@@ -65,6 +73,9 @@ public class MainGameClass extends ApplicationAdapter{
 		
 		dot = new Texture("Models/trajectorydot.png");
 		trajectoryDot = new Sprite(dot);
+		
+		playerScore = new Score("player");
+		computerScore = new Score("computer");
 	}
 
 	@Override
@@ -85,11 +96,7 @@ public class MainGameClass extends ApplicationAdapter{
 		
 		batch.begin();
 		
-		player.draw(batch);
-		computer.draw(batch);
-		ball.draw(batch);
-		playerGoal.draw(batch);
-		computerGoal.draw(batch);
+		drawAll(batch);
 		
 		/* TESTING - TRAJECTORY PATH  FOR AI */
 		for(int n=1; n<=32; n++){
@@ -125,7 +132,11 @@ public class MainGameClass extends ApplicationAdapter{
 				}
 				
 				if(collision(contact, "ball", "playergoal")){
-					Gdx.app.exit();
+					computerScore.incrementScore();
+				}
+				
+				if(collision(contact, "ball", "computergoal")){
+					playerScore.incrementScore();
 				}
 			}
 			
@@ -175,7 +186,7 @@ public class MainGameClass extends ApplicationAdapter{
 	 * Creates the goal.
 	 * When the back of the goal is touched by the ball, the opposing player will have scored.
 	 */
-	private Goal createGoalBody(String texturePath, String userDataIdentifier) {
+	private Goal createGoalBody(FileHandle texturePath, String userDataIdentifier) {
 		Goal goal = new Goal(texturePath, userDataIdentifier);
 		Body goalBody = world.createBody(goal.bodyDef_body);
 		
@@ -196,7 +207,7 @@ public class MainGameClass extends ApplicationAdapter{
 	 * Creates the ball.
 	 */
 	private void createBallBody() {
-		ball = new Ball("Models/soccerball.png");
+		ball = new Ball(Gdx.files.internal("Models/soccerball.png"));
 		Body ballBody = world.createBody(ball.bodyDef);
 		
 		ball.createShape();
@@ -210,7 +221,7 @@ public class MainGameClass extends ApplicationAdapter{
 	/**
 	 * Creates the slime.
 	 */
-	private Slime createSlimeBody(String texturePath, String userDataIdentifier, float positionOffset) {
+	private Slime createSlimeBody(FileHandle texturePath, String userDataIdentifier, float positionOffset) {
 		Slime entity = new Slime(texturePath, positionOffset);
 		Body slimeBody = world.createBody(entity.bodyDef);
 		
@@ -233,5 +244,15 @@ public class MainGameClass extends ApplicationAdapter{
 		}
 		
 		return false;
+	}
+	
+	private void drawAll(SpriteBatch batch) {
+		player.draw(batch);
+		computer.draw(batch);
+		ball.draw(batch);
+		playerGoal.draw(batch);
+		computerGoal.draw(batch);
+		playerScore.draw(batch);
+		computerScore.draw(batch);
 	}
 }
