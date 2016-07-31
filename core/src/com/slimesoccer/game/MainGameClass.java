@@ -86,21 +86,18 @@ public class MainGameClass extends ApplicationAdapter{
 
 			@Override
 			public void beginContact(Contact contact) {
-				if((contact.getFixtureA().getBody().getUserData() == "ground" &&
-				   contact.getFixtureB().getBody().getUserData() == "slime") ||
-				   (contact.getFixtureA().getBody().getUserData() == "slime" &&
-				   contact.getFixtureB().getBody().getUserData() == "ground")){
+				if(collision(contact, "ground", "slime")){
 					slime.airborne = false;
 				}
 				
+				if(collision(contact, "ball", "goal")){
+					Gdx.app.exit();
+				}
 			}
-
+			
 			@Override
 			public void endContact(Contact contact) {
-				if((contact.getFixtureA().getBody().getUserData() == "ground" &&
-				   contact.getFixtureB().getBody().getUserData() == "slime") ||
-				   (contact.getFixtureA().getBody().getUserData() == "slime" &&
-				   contact.getFixtureB().getBody().getUserData() == "ground")){
+				if(collision(contact, "ground", "slime")){
 					slime.airborne = true;
 				}
 				
@@ -187,5 +184,16 @@ public class MainGameClass extends ApplicationAdapter{
 		slime.shape.dispose();
 		slimeBody.setUserData("slime");
 		slime.body = slimeBody;
+	}
+	
+	private boolean collision(Contact contact, String bodyA, String bodyB) {
+		if((contact.getFixtureA().getBody().getUserData() == bodyA &&
+	    contact.getFixtureB().getBody().getUserData() == bodyB) ||
+	    (contact.getFixtureA().getBody().getUserData() == bodyB &&
+	    contact.getFixtureB().getBody().getUserData() == bodyA)){
+			return true;
+		}
+		
+		return false;
 	}
 }
