@@ -18,6 +18,9 @@ public class Slime {
 	public PolygonShape shape;
 	public FixtureDef fixtureDef;
 	
+	public float startingPositionX;
+	public float startingPositionY;
+	
 	public float maxSpeed = 2f;
 	public boolean airborne = true;
 	
@@ -25,10 +28,12 @@ public class Slime {
 		texture = new Texture(path);
 		sprite = new Sprite(texture);
 		
+		startingPositionX = (sprite.getWidth() / 2) / Constants.PIXELS_TO_METERS + positionOffset;
+		startingPositionY = ((sprite.getHeight() / 2) / Constants.PIXELS_TO_METERS - 2.25f) + ((sprite.getHeight()/2) / Constants.PIXELS_TO_METERS);
+		
 		bodyDef = new BodyDef();
 		bodyDef.type = BodyDef.BodyType.DynamicBody;
-		bodyDef.position.set((sprite.getWidth() / 2) / Constants.PIXELS_TO_METERS + positionOffset,
-							 (sprite.getHeight() / 2) / Constants.PIXELS_TO_METERS - 2.25f);
+		bodyDef.position.set(startingPositionX, startingPositionY);
 		bodyDef.fixedRotation = true;
 	}
 	
@@ -51,6 +56,7 @@ public class Slime {
 		fixtureDef.shape = shape;
 		fixtureDef.density = 0.1f;
 		fixtureDef.restitution = 0.0f;
+		fixtureDef.filter.groupIndex = -1;
 	}
 	
 	public void adjustSpritePosition(){
@@ -62,6 +68,10 @@ public class Slime {
 	public void draw(SpriteBatch batch){
 		batch.draw(sprite, sprite.getX(), sprite.getY(), sprite.getOriginX(), sprite.getOriginY(), sprite.getWidth(),
 				   sprite.getHeight(), sprite.getScaleX(), sprite.getScaleY(), sprite.getRotation());
+	}
+	
+	public void reset(){
+        body.setTransform(startingPositionX, startingPositionY, body.getAngle());
 	}
 
 }

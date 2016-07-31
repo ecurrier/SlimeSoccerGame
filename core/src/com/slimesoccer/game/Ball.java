@@ -18,16 +18,21 @@ public class Ball{
 	public CircleShape shape;
 	public FixtureDef fixtureDef;
 	
+	public float startingPositionX;
+	public float startingPositionY;
+	
 	public float maxSpeed = 10f;
 	
 	public Ball(FileHandle path){
 		texture = new Texture(path);
 		sprite = new Sprite(texture);
 		
+		startingPositionX = (sprite.getWidth() / 2) / Constants.PIXELS_TO_METERS;
+		startingPositionY = (sprite.getHeight() / 2) / Constants.PIXELS_TO_METERS;
+		
 		bodyDef = new BodyDef();
 		bodyDef.type = BodyDef.BodyType.DynamicBody;
-		bodyDef.position.set((sprite.getWidth() / 2) / Constants.PIXELS_TO_METERS,
-						     (sprite.getHeight() / 2) / Constants.PIXELS_TO_METERS);
+		bodyDef.position.set(startingPositionX, startingPositionY);
 	}
 	
 	public void createShape(){
@@ -51,5 +56,10 @@ public class Ball{
 	public void draw(SpriteBatch batch){
 		batch.draw(sprite, sprite.getX(), sprite.getY(), sprite.getOriginX(), sprite.getOriginY(), sprite.getWidth(),
 				   sprite.getHeight(), sprite.getScaleX(), sprite.getScaleY(), sprite.getRotation());
+	}
+	
+	public void reset(){
+		body.setLinearVelocity(0f, 0f);
+		body.setTransform(startingPositionX, startingPositionY, body.getAngle());
 	}
 }
