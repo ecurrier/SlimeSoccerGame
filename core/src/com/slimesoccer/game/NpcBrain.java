@@ -34,34 +34,37 @@ public class NpcBrain {
 		// Check if ball is going left or right
 		if (ball.body.getLinearVelocity().x <= 0) {
 			// ball is going left
-			
-			//check if jump is necessary
-			if (npc_y - ball_y > 20 / Constants.PIXELS_TO_METERS && !npc.airborne)
-				//jump
-				if (npc_x > ball_x + 10 / Constants.PIXELS_TO_METERS && npc.body.getLinearVelocity().x > -npc.maxSpeed)
-					npc.body.applyLinearImpulse(-.8f / Constants.PIXELS_TO_METERS, 1.00f/Constants.PIXELS_TO_METERS, npc.body.getPosition().x,
-							npc.body.getPosition().y, true);
-				else if (npc_x < ball_x + 10 / Constants.PIXELS_TO_METERS
-						&& npc.body.getLinearVelocity().x < npc.maxSpeed && !npc.airborne)
-					npc.body.applyLinearImpulse(.8f / Constants.PIXELS_TO_METERS, 1.00f/Constants.PIXELS_TO_METERS, npc.body.getPosition().x,
-							npc.body.getPosition().y, true);
-				else {
-					//no jump
-					if (npc_x > ball_x + 10 / Constants.PIXELS_TO_METERS
-							&& npc.body.getLinearVelocity().x > -npc.maxSpeed)
-						npc.body.applyLinearImpulse(-.8f / Constants.PIXELS_TO_METERS, 0, npc.body.getPosition().x,
-								npc.body.getPosition().y, true);
-					else if (npc_x < ball_x + 10 / Constants.PIXELS_TO_METERS
-							&& npc.body.getLinearVelocity().x < npc.maxSpeed)
-						npc.body.applyLinearImpulse(.8f / Constants.PIXELS_TO_METERS, 0, npc.body.getPosition().x,
-								npc.body.getPosition().y, true);
+
+			// check if jump is necessary
+			if (!npc.airborne && ball.body.getLinearVelocity().y < 0) {
+				// jump
+				if (npc_x > ball_x + 10 / Constants.PIXELS_TO_METERS
+						&& npc.body.getLinearVelocity().x > -npc.maxSpeed) {
+					npc.body.applyLinearImpulse(-.8f / Constants.PIXELS_TO_METERS, 1.00f / Constants.PIXELS_TO_METERS,
+							npc.body.getPosition().x, npc.body.getPosition().y, true);
+				} else if (npc.body.getLinearVelocity().x < npc.maxSpeed && !npc.airborne) {
+					npc.body.applyLinearImpulse(.8f / Constants.PIXELS_TO_METERS, 1.00f / Constants.PIXELS_TO_METERS,
+							npc.body.getPosition().x, npc.body.getPosition().y, true);
 				}
+			} else {
+				// no jump
+				if (npc_x > ball_x + 10 / Constants.PIXELS_TO_METERS
+						&& npc.body.getLinearVelocity().x > -npc.maxSpeed) {
+					npc.body.applyLinearImpulse(-.8f / Constants.PIXELS_TO_METERS, 0, npc.body.getPosition().x,
+							npc.body.getPosition().y, true);
+				} else if (npc_x < ball_x + 10 / Constants.PIXELS_TO_METERS
+						&& npc.body.getLinearVelocity().x < npc.maxSpeed) {
+					npc.body.applyLinearImpulse(.8f / Constants.PIXELS_TO_METERS, 0, npc.body.getPosition().x,
+							npc.body.getPosition().y, true);
+				}
+			}
 		} else {
 			// ball is going right
 
-			if (npc_y - ball_y > 20 / Constants.PIXELS_TO_METERS  && npc.body.getLinearVelocity().x < npc.maxSpeed  && !npc.airborne)
-				npc.body.applyLinearImpulse(.8f / Constants.PIXELS_TO_METERS, 1.00f/Constants.PIXELS_TO_METERS, npc.body.getPosition().x,
-						npc.body.getPosition().y, true);
+			if ( ball.body.getLinearVelocity().y < 0 && npc.body.getLinearVelocity().x < npc.maxSpeed
+					&& !npc.airborne)
+				npc.body.applyLinearImpulse(.8f / Constants.PIXELS_TO_METERS, 1.00f / Constants.PIXELS_TO_METERS,
+						npc.body.getPosition().x, npc.body.getPosition().y, true);
 			else if (npc.body.getLinearVelocity().x < npc.maxSpeed)
 				npc.body.applyLinearImpulse(.8f / Constants.PIXELS_TO_METERS, 0, npc.body.getPosition().x,
 						npc.body.getPosition().y, true);
