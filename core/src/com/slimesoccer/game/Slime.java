@@ -20,14 +20,14 @@ public class Slime {
 	public float maxSpeed = 2f;
 	public boolean airborne = true;
 	
-	public Slime(String path){
+	public Slime(String path, float positionOffset){
 		texture = new Texture(path);
 		sprite = new Sprite(texture);
 		
 		bodyDef = new BodyDef();
 		bodyDef.type = BodyDef.BodyType.DynamicBody;
-		bodyDef.position.set((sprite.getWidth() / 2) / Constants.PIXELS_TO_METERS - 2f,
-							 (sprite.getHeight() / 2) / Constants.PIXELS_TO_METERS - 2f);
+		bodyDef.position.set((sprite.getWidth() / 2) / Constants.PIXELS_TO_METERS + positionOffset,
+							 (sprite.getHeight() / 2) / Constants.PIXELS_TO_METERS - 2.25f);
 		bodyDef.fixedRotation = true;
 	}
 	

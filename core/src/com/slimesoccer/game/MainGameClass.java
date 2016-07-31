@@ -20,10 +20,13 @@ public class MainGameClass extends ApplicationAdapter{
 	World world;
 	Controller controller;
 	
-	Slime slime;
+	Slime player,
+		computer;
+	
 	Ball ball;
 	Boundary[] boundaries = new Boundary[4];
-	Goal goal;
+	Goal playerGoal,
+		computerGoal;
 
 	Box2DDebugRenderer debugRenderer;
 	Matrix4 debugMatrix;
@@ -35,9 +38,14 @@ public class MainGameClass extends ApplicationAdapter{
 		batch = new SpriteBatch();
 		controller = new Controller();
 		
-		createSlimeBody();
+		player = createSlimeBody("Models/redslime-right.png", "player", -2f);
+		computer = createSlimeBody("Models/blueslime-left.png", "computer", 1.25f);
+		
 		createBallBody();
-		createGoalBody();
+		
+		playerGoal = createGoalBody("Models/playergoal.png", "playergoal");
+		computerGoal = createGoalBody("Models/computergoal.png", "computergoal");
+		
 		createBoundaries();
 		
 		debugRenderer = new Box2DDebugRenderer();
@@ -53,9 +61,10 @@ public class MainGameClass extends ApplicationAdapter{
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
-		controller.checkMovement(slime);
+		controller.checkMovement(player);
 
-		slime.adjustSpritePosition();
+		player.adjustSpritePosition();
+		computer.adjustSpritePosition();
 		ball.adjustSpritePosition();
 
 		batch.setProjectionMatrix(camera.combined);
@@ -63,9 +72,11 @@ public class MainGameClass extends ApplicationAdapter{
 		
 		batch.begin();
 		
-		slime.draw(batch);
+		player.draw(batch);
+		computer.draw(batch);
 		ball.draw(batch);
-		goal.draw(batch);
+		playerGoal.draw(batch);
+		computerGoal.draw(batch);
 		
 		/* TESTING - TRAJECTORY PATH  FOR AI */
 		for(int n=1; n<=32; n++){
@@ -84,7 +95,7 @@ public class MainGameClass extends ApplicationAdapter{
 	@Override
 	public void dispose() {
 		batch.dispose();
-		slime.texture.dispose();
+		player.texture.dispose();
 		ball.texture.dispose();
 	}
 	
@@ -96,19 +107,19 @@ public class MainGameClass extends ApplicationAdapter{
 
 			@Override
 			public void beginContact(Contact contact) {
-				if(collision(contact, "ground", "slime")){
-					slime.airborne = false;
+				if(collision(contact, "ground", "player")){
+					player.airborne = false;
 				}
 				
-				if(collision(contact, "ball", "goal")){
+				if(collision(contact, "ball", "playergoal")){
 					Gdx.app.exit();
 				}
 			}
 			
 			@Override
 			public void endContact(Contact contact) {
-				if(collision(contact, "ground", "slime")){
-					slime.airborne = true;
+				if(collision(contact, "ground", "player")){
+					player.airborne = true;
 				}
 				
 			}
@@ -151,19 +162,21 @@ public class MainGameClass extends ApplicationAdapter{
 	 * Creates the goal.
 	 * When the back of the goal is touched by the ball, the opposing player will have scored.
 	 */
-	private void createGoalBody() {
-		goal = new Goal("Models/goal.png");
+	private Goal createGoalBody(String texturePath, String userDataIdentifier) {
+		Goal goal = new Goal(texturePath, userDataIdentifier);
 		Body goalBody = world.createBody(goal.bodyDef_body);
 		
-		goal.createShape();
+		goal.createShape(userDataIdentifier);
 		goal.setProperties();
 		goalBody.createFixture(goal.fixtureDef_body);
 		goal.shape_body.dispose();
-		goalBody.setUserData("goal");
+		goalBody.setUserData(userDataIdentifier);
 		
 		goalBody = world.createBody(goal.bodyDef_top);
 		goalBody.createFixture(goal.fixtureDef_top);
 		goal.shape_top.dispose();
+		
+		return goal;
 	}
 
 	/**
@@ -184,16 +197,18 @@ public class MainGameClass extends ApplicationAdapter{
 	/**
 	 * Creates the slime.
 	 */
-	private void createSlimeBody() {
-		slime = new Slime("Models/redslime-right.png");
-		Body slimeBody = world.createBody(slime.bodyDef);
+	private Slime createSlimeBody(String texturePath, String userDataIdentifier, float positionOffset) {
+		Slime entity = new Slime(texturePath, positionOffset);
+		Body slimeBody = world.createBody(entity.bodyDef);
 		
-		slime.createShape();
-		slime.setProperties();
-		slimeBody.createFixture(slime.fixtureDef);
-		slime.shape.dispose();
-		slimeBody.setUserData("slime");
-		slime.body = slimeBody;
+		entity.createShape();
+		entity.setProperties();
+		slimeBody.createFixture(entity.fixtureDef);
+		entity.shape.dispose();
+		slimeBody.setUserData(userDataIdentifier);
+		entity.body = slimeBody;
+		
+		return entity;
 	}
 	
 	private boolean collision(Contact contact, String bodyA, String bodyB) {
