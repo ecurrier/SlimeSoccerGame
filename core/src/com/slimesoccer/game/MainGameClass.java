@@ -66,6 +66,16 @@ public class MainGameClass extends ApplicationAdapter{
 		slime.draw(batch);
 		ball.draw(batch);
 		goal.draw(batch);
+		
+		/* TESTING - TRAJECTORY PATH  FOR AI */
+		for(int n=1; n<=32; n++){
+			float t = 6f / 60f;
+			Vector2 stepVelocity = ball.body.getLinearVelocity().scl(t);
+			Vector2 stepGravity = world.getGravity().scl(t*t);
+			
+			Vector2 calculation = (ball.body.getPosition().add(stepVelocity.scl(n)).add( stepGravity.scl(0.5f * (n*n+n))));
+			batch.draw(ball.sprite, calculation.x * 100f, calculation.y *  100f);
+		}
 
 		batch.end();
 		debugRenderer.render(world, debugMatrix); // Displays body structure lines
