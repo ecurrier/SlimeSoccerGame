@@ -2,11 +2,8 @@ package com.slimesoccer.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
@@ -18,105 +15,73 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 
-public class MainGameClass extends ApplicationAdapter implements InputProcessor {
+public class MainGameClass extends ApplicationAdapter{
 	SpriteBatch batch;
-	Sprite sprite, ballSprite;
-
+	World world;
+	Controller controller;
+	
 	Slime slime;
 	Ball ball;
 	Boundary[] boundaries = new Boundary[4];
 	Goal goal;
 
-	World world;
-	Body slimeBody, 
-		ballBody,
-		goalBody;
-	
-	Body bodyEdgeScreen;
 	Box2DDebugRenderer debugRenderer;
 	Matrix4 debugMatrix;
 	OrthographicCamera camera;
-
-	float torque = 0.0f;
-	boolean drawSprite = true;
-	boolean keyPressed_D = false, 
-			keyPressed_A = false,
-			keyPressed_Space = false;
-
-	public static float PIXELS_TO_METERS = 100f;
 
 	@Override
 	public void create() {
 		world = new World(new Vector2(0, -2f), true);
 		batch = new SpriteBatch();
+		controller = new Controller();
 		
-		slime = new Slime("Models/redslime-right.png");
-		ball = new Ball("Models/soccerball.png");
-		goal = new Goal("Models/goal.png");
-
-		/* SLIME */
-
-		slimeBody = world.createBody(slime.bodyDef);
-		slime.createShape();
-		slime.setProperties();
-		slimeBody.createFixture(slime.fixtureDef);
-		slime.shape.dispose();
-		slimeBody.setUserData("slime");
-
-		/* BALL */
+		createSlimeBody();
+		createBallBody();
+		createGoalBody();
+		createBoundaries();
 		
-		ballBody = world.createBody(ball.bodyDef);
-		ball.createShape();
-		ball.setProperties();
-		ballBody.createFixture(ball.fixtureDef);
-		ball.shape.dispose();
-		ballBody.setUserData("ball");
-		
-		slime.sprite.setPosition(-slime.sprite.getWidth() / 2, -slime.sprite.getHeight() / 2);
-		ball.sprite.setPosition(-ball.sprite.getWidth() / 2, -ball.sprite.getHeight() / 2);
-		
-		/* BOUNDARIES */
-		
-		for(int i=0; i < 4; i++){
-			boundaries[i] = new Boundary();
-			boundaries[i].setProperties(i);
-			
-			bodyEdgeScreen = world.createBody(boundaries[i].bodyDef);
-			bodyEdgeScreen.createFixture(boundaries[i].fixtureDef);
-			boundaries[i].shape.dispose();
-			
-			if(i==0){
-				bodyEdgeScreen.setUserData("ground");
-			}
-		}
-		
-		/* GOAL */
-		
-		goalBody = world.createBody(goal.bodyDef_body);
-		goal.createShape();
-		goal.setProperties();
-		goalBody.createFixture(goal.fixtureDef_body);
-		goal.shape_body.dispose();
-		goalBody.setUserData("goal");
-		
-		goalBody = world.createBody(goal.bodyDef_top);
-		goalBody.createFixture(goal.fixtureDef_top);
-		goal.shape_top.dispose();
-		
-
-		Gdx.input.setInputProcessor(this);
 		debugRenderer = new Box2DDebugRenderer();
 		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		
+		setContactListener();
 	}
 
 	@Override
 	public void render() {
 		camera.update();
 		world.step(1f / 60f, 6, 2);
-
-		slimeBody.applyTorque(torque, true);
-		ballBody.applyTorque(torque, true);
+		Gdx.gl.glClearColor(1, 1, 1, 1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
+		controller.checkMovement(slime);
+
+		slime.adjustSpritePosition();
+		ball.adjustSpritePosition();
+
+		batch.setProjectionMatrix(camera.combined);
+		debugMatrix = batch.getProjectionMatrix().cpy().scale(Constants.PIXELS_TO_METERS, Constants.PIXELS_TO_METERS, 0);
+		
+		batch.begin();
+		
+		slime.draw(batch);
+		ball.draw(batch);
+		goal.draw(batch);
+
+		batch.end();
+		debugRenderer.render(world, debugMatrix); // Displays body structure lines
+	}
+
+	@Override
+	public void dispose() {
+		batch.dispose();
+		slime.texture.dispose();
+		ball.texture.dispose();
+	}
+	
+	/**
+	 * Sets the rules for what happens when various objects contact each other.
+	 */
+	private void setContactListener() {
 		world.setContactListener(new ContactListener() {
 
 			@Override
@@ -143,124 +108,84 @@ public class MainGameClass extends ApplicationAdapter implements InputProcessor 
 
 			@Override
 			public void preSolve(Contact contact, Manifold oldManifold) {
-				// TODO Auto-generated method stub
-				
 			}
 
 			@Override
 			public void postSolve(Contact contact, ContactImpulse impulse) {
-				// TODO Auto-generated method stub
-				
 			}
 			
 		});
+	}
+
+	/**
+	 * Creates the 4 boundaries of the world.
+	 * The 'ground' is specifically labeled in order to properly identify when the
+	 * slime has contact with the ground in order to identify when the slime
+	 * can jump again.
+	 */
+	private void createBoundaries() {
+		Body bodyEdgeScreen;
 		
-		if(keyPressed_A && slimeBody.getLinearVelocity().x > -slime.maxSpeed){
-			slimeBody.applyLinearImpulse(-0.80f/PIXELS_TO_METERS, 0, slimeBody.getPosition().x, slimeBody.getPosition().y, true);
+		for(int i=0; i < 4; i++){
+			boundaries[i] = new Boundary();
+			boundaries[i].setProperties(i);
+			
+			bodyEdgeScreen = world.createBody(boundaries[i].bodyDef);
+			bodyEdgeScreen.createFixture(boundaries[i].fixtureDef);
+			boundaries[i].shape.dispose();
+			
+			if(i==0){
+				bodyEdgeScreen.setUserData("ground");
+			}
 		}
-		if(keyPressed_D && slimeBody.getLinearVelocity().x < slime.maxSpeed){
-			slimeBody.applyLinearImpulse(0.80f/PIXELS_TO_METERS, 0, slimeBody.getPosition().x, slimeBody.getPosition().y, true);
-		}
-		if(keyPressed_Space && !slime.airborne){
-			slimeBody.applyLinearImpulse(0, 1.00f/PIXELS_TO_METERS, slimeBody.getPosition().x, slimeBody.getPosition().y, true);
-		}
+	}
 
-		slime.sprite.setPosition((slimeBody.getPosition().x * PIXELS_TO_METERS) - slime.sprite.getWidth() / 2,
-				(slimeBody.getPosition().y * PIXELS_TO_METERS) - slime.sprite.getHeight() / 2);
-		slime.sprite.setRotation((float) Math.toDegrees(slimeBody.getAngle()));
-
-		ball.sprite.setPosition((ballBody.getPosition().x * PIXELS_TO_METERS) - ball.sprite.getWidth() / 2,
-				(ballBody.getPosition().y * PIXELS_TO_METERS) - ball.sprite.getHeight() / 2);
-		ball.sprite.setRotation((float) Math.toDegrees(ballBody.getAngle()));
-
-		Gdx.gl.glClearColor(1, 1, 1, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-		batch.setProjectionMatrix(camera.combined);
-		debugMatrix = batch.getProjectionMatrix().cpy().scale(PIXELS_TO_METERS, PIXELS_TO_METERS, 0);
-		batch.begin();
-
-		batch.draw(slime.sprite, slime.sprite.getX(), slime.sprite.getY(), slime.sprite.getOriginX(), slime.sprite.getOriginY(), slime.sprite.getWidth(),
-				slime.sprite.getHeight(), slime.sprite.getScaleX(), slime.sprite.getScaleY(), slime.sprite.getRotation());
-
-		batch.draw(ball.sprite, ball.sprite.getX(), ball.sprite.getY(), ball.sprite.getOriginX(), ball.sprite.getOriginY(),
-				ball.sprite.getWidth(), ball.sprite.getHeight(), ball.sprite.getScaleX(), ball.sprite.getScaleY(),
-				ball.sprite.getRotation());
+	/**
+	 * Creates the goal.
+	 * When the back of the goal is touched by the ball, the opposing player will have scored.
+	 */
+	private void createGoalBody() {
+		goal = new Goal("Models/goal.png");
+		Body goalBody = world.createBody(goal.bodyDef_body);
 		
-		batch.draw(goal.sprite, goal.sprite.getX(), goal.sprite.getY());
-
-		batch.end();
-		debugRenderer.render(world, debugMatrix);
+		goal.createShape();
+		goal.setProperties();
+		goalBody.createFixture(goal.fixtureDef_body);
+		goal.shape_body.dispose();
+		goalBody.setUserData("goal");
+		
+		goalBody = world.createBody(goal.bodyDef_top);
+		goalBody.createFixture(goal.fixtureDef_top);
+		goal.shape_top.dispose();
 	}
 
-	@Override
-	public void dispose() {
-		batch.dispose();
-		slime.texture.dispose();
-		ball.texture.dispose();
+	/**
+	 * Creates the ball.
+	 */
+	private void createBallBody() {
+		ball = new Ball("Models/soccerball.png");
+		Body ballBody = world.createBody(ball.bodyDef);
+		
+		ball.createShape();
+		ball.setProperties();
+		ballBody.createFixture(ball.fixtureDef);
+		ball.shape.dispose();
+		ballBody.setUserData("ball");
+		ball.body = ballBody;
 	}
 
-	@Override
-	public boolean keyDown(int keycode) {
-		if (keycode == Input.Keys.D){
-			keyPressed_D = true;
-		}
-		if (keycode == Input.Keys.A){
-			keyPressed_A = true;
-		}
-		if (keycode == Input.Keys.SPACE){
-			keyPressed_Space = true;
-		}
-
-		return false;
-	}
-
-	@Override
-	public boolean keyUp(int keycode) {
-		if (keycode == Input.Keys.D){
-			keyPressed_D = false;
-		}
-		if (keycode == Input.Keys.A){
-			keyPressed_A = false;
-		}
-		if (keycode == Input.Keys.SPACE){
-			keyPressed_Space = false;
-		}
-		return false;
-	}
-
-	@Override
-	public boolean keyTyped(char character) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		return true;
-	}
-
-	@Override
-	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean mouseMoved(int screenX, int screenY) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean scrolled(int amount) {
-		// TODO Auto-generated method stub
-		return false;
+	/**
+	 * Creates the slime.
+	 */
+	private void createSlimeBody() {
+		slime = new Slime("Models/redslime-right.png");
+		Body slimeBody = world.createBody(slime.bodyDef);
+		
+		slime.createShape();
+		slime.setProperties();
+		slimeBody.createFixture(slime.fixtureDef);
+		slime.shape.dispose();
+		slimeBody.setUserData("slime");
+		slime.body = slimeBody;
 	}
 }
