@@ -4,7 +4,10 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -31,10 +34,13 @@ public class MainGameClass extends ApplicationAdapter{
 	Box2DDebugRenderer debugRenderer;
 	Matrix4 debugMatrix;
 	OrthographicCamera camera;
+	
+	Texture dot;
+	Sprite trajectoryDot;
 
 	@Override
 	public void create() {
-		world = new World(new Vector2(0, -2f), true);
+		world = new World(new Vector2(0, -3f), true);
 		batch = new SpriteBatch();
 		controller = new Controller();
 		
@@ -52,6 +58,9 @@ public class MainGameClass extends ApplicationAdapter{
 		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		
 		setContactListener();
+		
+		dot = new Texture("Models/trajectorydot.png");
+		trajectoryDot = new Sprite(dot);
 	}
 
 	@Override
@@ -85,7 +94,7 @@ public class MainGameClass extends ApplicationAdapter{
 			Vector2 stepGravity = world.getGravity().scl(t*t);
 			
 			Vector2 calculation = (ball.body.getPosition().add(stepVelocity.scl(n)).add( stepGravity.scl(0.5f * (n*n+n))));
-			batch.draw(ball.sprite, calculation.x * 100f, calculation.y *  100f);
+			batch.draw(trajectoryDot, calculation.x * 100f, calculation.y *  100f);
 		}
 
 		batch.end();
