@@ -26,7 +26,6 @@ public class MainGameClass extends ApplicationAdapter{
 	Slime player,
 		computer;
 
-	
 	Ball ball;
 	NpcBrain npc;
 	Boundary[] boundaries = new Boundary[4];
@@ -39,6 +38,8 @@ public class MainGameClass extends ApplicationAdapter{
 	
 	Texture dot;
 	Sprite trajectoryDot;
+	
+	Sprite background;
 	
 	Score playerScore,
 		computerScore;
@@ -65,8 +66,9 @@ public class MainGameClass extends ApplicationAdapter{
 		
 		setContactListener();
 		
-		dot = new Texture("Models/trajectorydot.png");
-		trajectoryDot = new Sprite(dot);
+		trajectoryDot = new Sprite(new Texture(Gdx.files.internal("Models/trajectorydot.png")));
+		
+		background = new Sprite(new Texture(Gdx.files.internal("Models/background-day.png")));
 		
 		playerScore = new Score("player");
 		computerScore = new Score("computer");
@@ -92,6 +94,7 @@ public class MainGameClass extends ApplicationAdapter{
 		
 		batch.begin();
 		
+		batch.draw(background, -Gdx.graphics.getWidth()/2, -Gdx.graphics.getHeight()/2);
 		drawAll(batch);
 		
 		/* TESTING - TRAJECTORY PATH  FOR AI */
@@ -105,7 +108,7 @@ public class MainGameClass extends ApplicationAdapter{
 		}
 
 		batch.end();
-		debugRenderer.render(world, debugMatrix); // Displays body structure lines
+		//debugRenderer.render(world, debugMatrix); // Displays body structure lines
 	}
 
 	@Override
