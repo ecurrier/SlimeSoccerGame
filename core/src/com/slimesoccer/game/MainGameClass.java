@@ -42,6 +42,8 @@ public class MainGameClass extends ApplicationAdapter{
 	
 	Score playerScore,
 		computerScore;
+	
+	boolean flaggedForReset = false;
 
 	@Override
 	public void create() {
@@ -51,16 +53,12 @@ public class MainGameClass extends ApplicationAdapter{
 		
 		player = createSlimeBody(Gdx.files.internal("Models/redslime-right.png"), "player", -2f);
 		computer = createSlimeBody(Gdx.files.internal("Models/blueslime-left.png"), "computer", 1.25f);
-		
-		createBallBody();
-		
-
-		npc = new NpcBrain(computer,ball);
-		
 		playerGoal = createGoalBody(Gdx.files.internal("Models/playergoal.png"), "playergoal");
 		computerGoal = createGoalBody(Gdx.files.internal("Models/computergoal.png"), "computergoal");
-		
+		createBallBody();
 		createBoundaries();
+		
+		npc = new NpcBrain(computer,ball);
 		
 		debugRenderer = new Box2DDebugRenderer();
 		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -78,6 +76,8 @@ public class MainGameClass extends ApplicationAdapter{
 	public void render() {
 		camera.update();
 		world.step(1f / 60f, 6, 2);
+		checkForReset();
+		
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
@@ -133,10 +133,12 @@ public class MainGameClass extends ApplicationAdapter{
 				
 				if(collision(contact, "ball", "playergoal")){
 					computerScore.incrementScore();
+					flaggedForReset = true;
 				}
 				
 				if(collision(contact, "ball", "computergoal")){
 					playerScore.incrementScore();
+					flaggedForReset = true;
 				}
 			}
 			
@@ -257,5 +259,18 @@ public class MainGameClass extends ApplicationAdapter{
 		computerGoal.draw(batch);
 		playerScore.draw(batch);
 		computerScore.draw(batch);
+	}
+	
+	public void resetPositions(){
+		player.reset();
+		computer.reset();
+		ball.reset();
+	}
+	
+	public void checkForReset(){
+		if(flaggedForReset){
+			resetPositions();
+			flaggedForReset = false;
+		}
 	}
 }
