@@ -54,15 +54,11 @@ public class MainGameClass extends ApplicationAdapter{
 		
 		createBallBody();
 		
-<<<<<<< HEAD
+
 		npc = new NpcBrain(computer,ball);
 		
-		playerGoal = createGoalBody("Models/playergoal.png", "playergoal");
-		computerGoal = createGoalBody("Models/computergoal.png", "computergoal");
-=======
 		playerGoal = createGoalBody(Gdx.files.internal("Models/playergoal.png"), "playergoal");
 		computerGoal = createGoalBody(Gdx.files.internal("Models/computergoal.png"), "computergoal");
->>>>>>> master
 		
 		createBoundaries();
 		
