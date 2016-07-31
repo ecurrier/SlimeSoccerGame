@@ -1,5 +1,6 @@
 package com.slimesoccer.game;
 
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -19,7 +20,7 @@ public class Ball{
 	
 	public float maxSpeed = 10f;
 	
-	public Ball(String path){
+	public Ball(FileHandle path){
 		texture = new Texture(path);
 		sprite = new Sprite(texture);
 		
