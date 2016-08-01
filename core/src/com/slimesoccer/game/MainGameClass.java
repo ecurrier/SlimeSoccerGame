@@ -41,8 +41,8 @@ public class MainGameClass extends ApplicationAdapter{
 	
 	Sprite background;
 	
-	Score playerScore,
-		computerScore;
+	static Score playerScore;
+	Score computerScore;
 	
 	boolean flaggedForReset = false;
 
@@ -62,7 +62,7 @@ public class MainGameClass extends ApplicationAdapter{
 		npc = new NpcBrain(computer,ball);
 		
 		debugRenderer = new Box2DDebugRenderer();
-		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		camera = new OrthographicCamera(640, 480);
 		
 		setContactListener();
 		
@@ -90,11 +90,11 @@ public class MainGameClass extends ApplicationAdapter{
 		ball.adjustSpritePosition();
 
 		batch.setProjectionMatrix(camera.combined);
-		debugMatrix = batch.getProjectionMatrix().cpy().scale(Constants.PIXELS_TO_METERS, Constants.PIXELS_TO_METERS, 0);
+		//debugMatrix = batch.getProjectionMatrix().cpy().scale(Constants.PIXELS_TO_METERS, Constants.PIXELS_TO_METERS, 0);
 		
 		batch.begin();
 		
-		batch.draw(background, -Gdx.graphics.getWidth()/2, -Gdx.graphics.getHeight()/2);
+		batch.draw(background, -640/2, -480/2);
 		drawAll(batch);
 		
 		/* TESTING - TRAJECTORY PATH  FOR AI */

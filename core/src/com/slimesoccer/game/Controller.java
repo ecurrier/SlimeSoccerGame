@@ -62,11 +62,33 @@ public class Controller implements InputProcessor {
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+		if(screenX < Gdx.graphics.getWidth()/2 &&
+		   screenY > Gdx.graphics.getHeight()/2){
+			keyPressed_A = true;
+		}
+		if(screenX >= Gdx.graphics.getWidth()/2 &&
+		   screenY > Gdx.graphics.getHeight()/2){
+			keyPressed_D = true;
+		}
+		if (screenY < Gdx.graphics.getHeight()/2){
+			keyPressed_Space = true;
+		}
 		return false;
 	}
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+		if(screenX < Gdx.graphics.getWidth()/2 &&
+		   screenY > Gdx.graphics.getHeight()/2){
+			keyPressed_A = false;
+		}
+		if(screenX >= Gdx.graphics.getWidth()/2 &&
+		   screenY > Gdx.graphics.getHeight()/2){
+			keyPressed_D = false;
+		}
+		if (screenY < Gdx.graphics.getHeight()/2){
+			keyPressed_Space = false;
+		}
 		return false;
 	}
 

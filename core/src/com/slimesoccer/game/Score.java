@@ -1,6 +1,5 @@
 package com.slimesoccer.game;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -19,12 +18,12 @@ public class Score {
 		this.identifier = identifier;
 		
 		if(identifier == "player"){
-			x = (-Gdx.graphics.getWidth() + 50) / 2;
-			y = (Gdx.graphics.getHeight() - 50) / 2;
+			x = (-640 + 50) / 2;
+			y = (480 - 50) / 2;
 		}
 		else if(identifier == "computer"){
-			x = (Gdx.graphics.getWidth() - (50 + 365)) / 2;
-			y = (Gdx.graphics.getHeight() - 50) / 2;
+			x = (640 - (50 + 365)) / 2;
+			y = (480 - 50) / 2;
 		}
 		
 		setName(score);

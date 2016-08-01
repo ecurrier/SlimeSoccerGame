@@ -25,26 +25,26 @@ public class Boundary {
 		
 		switch(location){
 		case 0:
-			width = Gdx.graphics.getWidth() / Constants.PIXELS_TO_METERS;
-			height = (Gdx.graphics.getHeight() - 50) / Constants.PIXELS_TO_METERS;
+			width = 640 / Constants.PIXELS_TO_METERS;
+			height = (480 - 50) / Constants.PIXELS_TO_METERS;
 			shape.set(-width / 2, -height / 2, width / 2, -height / 2);
 			fixtureDef.friction = 100f;
 			break;
 		case 1:
-			width = (Gdx.graphics.getWidth() - 50) / Constants.PIXELS_TO_METERS;
-			height = Gdx.graphics.getHeight() / Constants.PIXELS_TO_METERS;
+			width = (640 - 50) / Constants.PIXELS_TO_METERS;
+			height = 480 / Constants.PIXELS_TO_METERS;
 			shape.set(-width / 2, -height / 2, -width / 2, height / 2);
 			fixtureDef.friction = 0f;
 			break;
 		case 2:
-			width = (-Gdx.graphics.getWidth() + 50) / Constants.PIXELS_TO_METERS;
-			height = Gdx.graphics.getHeight() / Constants.PIXELS_TO_METERS;
+			width = (-640 + 50) / Constants.PIXELS_TO_METERS;
+			height = 480 / Constants.PIXELS_TO_METERS;
 			shape.set(-width / 2, -height / 2, -width / 2, height / 2);
 			fixtureDef.friction = 0f;
 			break;
 		case 3:
-			width = Gdx.graphics.getWidth() / Constants.PIXELS_TO_METERS;
-			height = (-Gdx.graphics.getHeight()  + 50) / Constants.PIXELS_TO_METERS;
+			width = 640 / Constants.PIXELS_TO_METERS;
+			height = (-480  + 50) / Constants.PIXELS_TO_METERS;
 			shape.set(-width / 2, -height / 2, width / 2, -height / 2);
 			fixtureDef.friction = 0f;
 			break;
