@@ -33,6 +33,7 @@ public class Ball{
 		bodyDef = new BodyDef();
 		bodyDef.type = BodyDef.BodyType.DynamicBody;
 		bodyDef.position.set(startingPositionX, startingPositionY);
+		bodyDef.linearDamping = 0.25f;
 	}
 	
 	public void createShape(){

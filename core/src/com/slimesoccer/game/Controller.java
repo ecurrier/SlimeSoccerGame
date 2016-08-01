@@ -16,13 +16,13 @@ public class Controller implements InputProcessor {
 	
 	public void checkMovement(Slime slime){
 		if(keyPressed_A && slime.body.getLinearVelocity().x > -slime.maxSpeed){
-			slime.body.applyLinearImpulse(-0.80f/Constants.PIXELS_TO_METERS, 0, slime.body.getPosition().x, slime.body.getPosition().y, true);
+			slime.body.applyLinearImpulse(-Constants.MOVE_VELOCITY/Constants.PIXELS_TO_METERS, 0, slime.body.getPosition().x, slime.body.getPosition().y, true);
 		}
 		if(keyPressed_D && slime.body.getLinearVelocity().x < slime.maxSpeed){
-			slime.body.applyLinearImpulse(0.80f/Constants.PIXELS_TO_METERS, 0, slime.body.getPosition().x, slime.body.getPosition().y, true);
+			slime.body.applyLinearImpulse(Constants.MOVE_VELOCITY/Constants.PIXELS_TO_METERS, 0, slime.body.getPosition().x, slime.body.getPosition().y, true);
 		}
 		if(keyPressed_Space && !slime.airborne){
-			slime.body.applyLinearImpulse(0, 1.00f/Constants.PIXELS_TO_METERS, slime.body.getPosition().x, slime.body.getPosition().y, true);
+			slime.body.applyLinearImpulse(0, Constants.JUMP_VELOCITY/Constants.PIXELS_TO_METERS, slime.body.getPosition().x, slime.body.getPosition().y, true);
 		}
 	}
 

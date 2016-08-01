@@ -35,6 +35,7 @@ public class Slime {
 		bodyDef.type = BodyDef.BodyType.DynamicBody;
 		bodyDef.position.set(startingPositionX, startingPositionY);
 		bodyDef.fixedRotation = true;
+		bodyDef.linearDamping = 2.0f;
 	}
 	
 	public void createShape(){
