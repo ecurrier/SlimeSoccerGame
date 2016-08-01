@@ -6,6 +6,13 @@ public class NpcBrain {
 
 	private Slime npc;
 	private Ball ball;
+	
+	private float ball_x,
+		ball_y,
+		npc_x,
+		npc_y,
+		npc_left,
+		npc_right;
 
 	NpcBrain(Slime npc, Ball ball) {
 		this.npc = npc;
@@ -74,39 +81,30 @@ public class NpcBrain {
 	}
 	
 	public void MoveNpcAggressive(){
-		float ball_x = ball.body.getPosition().x,
-			npc_x = npc.body.getPosition().x,
-			ball_y = ball.body.getPosition().y,
-			npc_y = npc.body.getPosition().y;
+		ball_x = ball.body.getPosition().x;
+		npc_x = npc.body.getPosition().x;
+		ball_y = ball.body.getPosition().y;
+		npc_y = npc.body.getPosition().y;
 		
-		float leftEnd = npc_x - ((npc.sprite.getWidth()/2)/Constants.PIXELS_TO_METERS);
-		float rightEnd = leftEnd + (npc.sprite.getWidth()/Constants.PIXELS_TO_METERS);
+		npc_left = npc_x - ((npc.sprite.getWidth()/2)/Constants.PIXELS_TO_METERS);
+		npc_right = npc_left + (npc.sprite.getWidth()/Constants.PIXELS_TO_METERS);
 		
-		if((ball.body.getLinearVelocity().x > 3.5f || ball.body.getLinearVelocity().x < -3.5f) &&
-			npc.body.getLinearVelocity().x < npc.maxSpeed){
-			Gdx.app.log("AI-move", "Retreating due to high ball speed.");
+		if(calculateBallHighSpeed()){
 			commandMoveRight();
 		}
-		else if((ball_x > (leftEnd - ((ball.sprite.getWidth()/2)/Constants.PIXELS_TO_METERS)) && ball_x < rightEnd) &&
-			   ball_y < npc_y &&
-			   npc.body.getLinearVelocity().x < npc.maxSpeed &&
-			   npc.airborne){
-			Gdx.app.log("AI-move", "Ball stuck under slime, moving right");
+		else if(calculateBallUnderSlime()){
 			commandMoveRight();
 		}
 		else{
-			if (npc_x > ball_x + .2 && npc.body.getLinearVelocity().x > -npc.maxSpeed){	
+			if (calculateBallLeft()){	
 				commandMoveLeft();
 			}
-			else if (npc_x < ball_x + .2 && npc.body.getLinearVelocity().x < npc.maxSpeed){
+			else if (calculateBallRight()){
 				commandMoveRight();
 			}
 		}
 		
-		// Checks that ball is in specific range before attempting to jump
-		if((ball_y < (npc_y + 1) && !npc.airborne) &&
-		   ((npc_x + 0.5f) > ball_x) && ((npc_x - 0.5f) < ball_x)){
-			Gdx.app.log("AI-move", "Detected that ball is hittable with a jump. Executing jump.");
+		if(calculateJump()){
 			commandJump();
 		}
 	}
@@ -124,5 +122,51 @@ public class NpcBrain {
 	public void commandJump(){
 		npc.body.applyLinearImpulse(0f, Constants.JUMP_VELOCITY / Constants.PIXELS_TO_METERS,
 				npc.body.getPosition().x, npc.body.getPosition().y, true);
+	}
+	
+	public boolean calculateBallLeft(){
+		if(npc_x > ball_x + .2 && npc.body.getLinearVelocity().x > -npc.maxSpeed){
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public boolean calculateBallRight(){
+		if(npc_x < ball_x + .2 && npc.body.getLinearVelocity().x < npc.maxSpeed){
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public boolean calculateJump(){
+		if((ball_y < (npc_y + 1) && !npc.airborne) &&
+		  ((npc_x + 0.5f) > ball_x) && ((npc_x - 0.5f) < ball_x)){
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public boolean calculateBallHighSpeed(){
+		if((ball.body.getLinearVelocity().x > 3.5f || ball.body.getLinearVelocity().x < -3.5f) &&
+			npc.body.getLinearVelocity().x < npc.maxSpeed){
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public boolean calculateBallUnderSlime(){
+		if(ball_x > (npc_left - ((ball.sprite.getWidth()/2)/Constants.PIXELS_TO_METERS)) && 
+			ball_x < npc_right &&
+		    ball_y < npc_y &&
+		    npc.body.getLinearVelocity().x < npc.maxSpeed &&
+		    npc.airborne){
+		    	return true;
+	    }
+		   
+		return false;
 	}
 }
