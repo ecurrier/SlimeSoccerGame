@@ -38,7 +38,7 @@ public class NpcBrain {
 			// check if jump is necessary
 			if (!npc.airborne && ball.body.getLinearVelocity().y < 0) {
 				// jump
-				if (npc_x > ball_x + 10 / Constants.PIXELS_TO_METERS
+				if (npc_y > ball_y + 10 / Constants.PIXELS_TO_METERS
 						&& npc.body.getLinearVelocity().x > -npc.maxSpeed) {
 					npc.body.applyLinearImpulse(-.8f / Constants.PIXELS_TO_METERS, 1.00f / Constants.PIXELS_TO_METERS,
 							npc.body.getPosition().x, npc.body.getPosition().y, true);
@@ -71,5 +71,37 @@ public class NpcBrain {
 
 		}
 
+	}
+	
+	public void MoveNpcAggressive(){
+		float ball_x = ball.body.getPosition().x;
+		float npc_x = npc.body.getPosition().x;
+
+		float ball_y = ball.body.getPosition().y;
+		float npc_y = npc.body.getPosition().y;
+		
+		if (npc_x > ball_x + .2 && npc.body.getLinearVelocity().x > -npc.maxSpeed){	
+			npc.body.applyLinearImpulse(-Constants.MOVE_VELOCITY / Constants.PIXELS_TO_METERS, 0, npc.body.getPosition().x,
+				npc.body.getPosition().y, true);
+		}
+		else if (npc_x < ball_x + .2 && npc.body.getLinearVelocity().x < npc.maxSpeed){
+			if((ball.body.getLinearVelocity().x > 3.5f || ball.body.getLinearVelocity().x < -3.5f)){
+				Gdx.app.log("AI-move", "Retreating due to high ball speed.");
+				npc.body.applyLinearImpulse(Constants.MOVE_VELOCITY / Constants.PIXELS_TO_METERS, 0, npc.body.getPosition().x,
+						npc.body.getPosition().y, true);
+			}
+			else{
+				npc.body.applyLinearImpulse(Constants.MOVE_VELOCITY / Constants.PIXELS_TO_METERS, 0, npc.body.getPosition().x,
+						npc.body.getPosition().y, true);
+			}
+		}
+		
+		// Checks that ball is in specific range before attempting to jump
+		if((ball_y < (npc_y + 1) && !npc.airborne) &&
+			((npc_x + 0.5f) > ball_x) && ((npc_x - 0.5f) < ball_x)){
+			Gdx.app.log("AI-move", "Detected that ball is hittable with a jump. Executing jump.");
+			npc.body.applyLinearImpulse(0f, Constants.JUMP_VELOCITY / Constants.PIXELS_TO_METERS,
+					npc.body.getPosition().x, npc.body.getPosition().y, true);
+		}
 	}
 }
