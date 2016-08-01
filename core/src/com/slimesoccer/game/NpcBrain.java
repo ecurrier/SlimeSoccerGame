@@ -80,17 +80,27 @@ public class NpcBrain {
 		float ball_y = ball.body.getPosition().y;
 		float npc_y = npc.body.getPosition().y;
 		
-		if (npc_x > ball_x + .2 && npc.body.getLinearVelocity().x > -npc.maxSpeed){	
-			npc.body.applyLinearImpulse(-Constants.MOVE_VELOCITY / Constants.PIXELS_TO_METERS, 0, npc.body.getPosition().x,
-				npc.body.getPosition().y, true);
+		if((ball.body.getLinearVelocity().x > 3.5f || ball.body.getLinearVelocity().x < -3.5f) &&
+			npc.body.getLinearVelocity().x < npc.maxSpeed){
+			Gdx.app.log("AI-move", "Retreating due to high ball speed.");
+			npc.body.applyLinearImpulse(Constants.MOVE_VELOCITY / Constants.PIXELS_TO_METERS, 0, npc.body.getPosition().x,
+					npc.body.getPosition().y, true);
 		}
-		else if (npc_x < ball_x + .2 && npc.body.getLinearVelocity().x < npc.maxSpeed){
-			if((ball.body.getLinearVelocity().x > 3.5f || ball.body.getLinearVelocity().x < -3.5f)){
-				Gdx.app.log("AI-move", "Retreating due to high ball speed.");
-				npc.body.applyLinearImpulse(Constants.MOVE_VELOCITY / Constants.PIXELS_TO_METERS, 0, npc.body.getPosition().x,
+		else if(ball_x > npc_x && 
+			   ball_x < npc_x + (npc.sprite.getWidth() / Constants.PIXELS_TO_METERS) &&
+			   ball_y < npc_y &&
+			   npc.body.getLinearVelocity().x < npc.maxSpeed &&
+			   npc.airborne){
+			Gdx.app.log("AI-move", "Ball stuck under slime, moving right");
+			npc.body.applyLinearImpulse(Constants.MOVE_VELOCITY / Constants.PIXELS_TO_METERS, 0, npc.body.getPosition().x,
+					npc.body.getPosition().y, true);
+		}
+		else{
+			if (npc_x > ball_x + .2 && npc.body.getLinearVelocity().x > -npc.maxSpeed){	
+				npc.body.applyLinearImpulse(-Constants.MOVE_VELOCITY / Constants.PIXELS_TO_METERS, 0, npc.body.getPosition().x,
 						npc.body.getPosition().y, true);
 			}
-			else{
+			else if (npc_x < ball_x + .2 && npc.body.getLinearVelocity().x < npc.maxSpeed){
 				npc.body.applyLinearImpulse(Constants.MOVE_VELOCITY / Constants.PIXELS_TO_METERS, 0, npc.body.getPosition().x,
 						npc.body.getPosition().y, true);
 			}
