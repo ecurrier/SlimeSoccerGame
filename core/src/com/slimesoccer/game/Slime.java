@@ -22,7 +22,11 @@ public class Slime {
 	public float startingPositionY;
 	
 	public float maxSpeed = 2f;
+	public float speedFactor = 1f;
 	public boolean airborne = true;
+	public boolean boostActive = false;
+	
+	public long boostStart;
 	
 	public Slime(FileHandle path, float positionOffset){
 		texture = new Texture(path);
@@ -69,6 +73,20 @@ public class Slime {
 	public void draw(SpriteBatch batch){
 		batch.draw(sprite, sprite.getX(), sprite.getY(), sprite.getOriginX(), sprite.getOriginY(), sprite.getWidth(),
 				   sprite.getHeight(), sprite.getScaleX(), sprite.getScaleY(), sprite.getRotation());
+	}
+	
+	public void setBoost(boolean active){
+		if(active){
+			speedFactor = 1.5f;
+			boostStart = System.nanoTime();
+			maxSpeed *= speedFactor;
+		}
+		else{
+			maxSpeed /= speedFactor;
+			speedFactor = 1f;
+		}
+		
+		boostActive = active;
 	}
 	
 	public void reset(){

@@ -7,4 +7,7 @@ public class Constants {
 	
 	public static int SCREEN_WIDTH = 640;
 	public static int SCREEN_HEIGHT = 480;
+	
+	public static float NANO = 10000000;
+	public static float BOOST_DURATION = 500;
 }

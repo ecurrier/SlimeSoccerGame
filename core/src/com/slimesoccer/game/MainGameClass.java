@@ -83,8 +83,11 @@ public class MainGameClass extends ApplicationAdapter{
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
+		checkDurations();
+		
 		controller.checkMovement(player);
 		npc.MoveNpcAggressive();
+		
 		player.adjustSpritePosition();
 		computer.adjustSpritePosition();
 		ball.adjustSpritePosition();
@@ -97,15 +100,7 @@ public class MainGameClass extends ApplicationAdapter{
 		batch.draw(background, -Constants.SCREEN_WIDTH/2, -Constants.SCREEN_HEIGHT/2);
 		drawAll(batch);
 		
-		/* TESTING - TRAJECTORY PATH  FOR AI */
-		/*for(int n=1; n<=32; n++){
-			float t = 6f / 60f;
-			Vector2 stepVelocity = ball.body.getLinearVelocity().scl(t);
-			Vector2 stepGravity = world.getGravity().scl(t*t);
-			
-			Vector2 calculation = (ball.body.getPosition().add(stepVelocity.scl(n)).add( stepGravity.scl(0.5f * (n*n+n))));
-			batch.draw(trajectoryDot, calculation.x * 100f, calculation.y *  100f);
-		}*/
+		//displayBallTrajectory();
 
 		batch.end();
 		debugRenderer.render(world, debugMatrix); // Displays body structure lines
@@ -252,6 +247,26 @@ public class MainGameClass extends ApplicationAdapter{
 		}
 		
 		return false;
+	}
+	
+	private void checkDurations(){
+		if(player.boostActive){
+			float currentDuration = ((System.nanoTime() - player.boostStart)/Constants.NANO);
+			if(currentDuration >= (Constants.BOOST_DURATION)){
+				player.setBoost(false);
+			}
+		}
+	}
+	
+	private void displayBallTrajectory(){
+		for(int n=1; n<=32; n++){
+			float t = 6f / 60f;
+			Vector2 stepVelocity = ball.body.getLinearVelocity().scl(t);
+			Vector2 stepGravity = world.getGravity().scl(t*t);
+			
+			Vector2 calculation = (ball.body.getPosition().add(stepVelocity.scl(n)).add( stepGravity.scl(0.5f * (n*n+n))));
+			batch.draw(trajectoryDot, calculation.x * 100f, calculation.y *  100f);
+		}
 	}
 	
 	private void drawAll(SpriteBatch batch) {

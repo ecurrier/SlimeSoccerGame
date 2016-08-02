@@ -8,6 +8,7 @@ public class Controller implements InputProcessor {
 	
 	boolean keyPressed_D = false, 
 			keyPressed_A = false,
+			keyPressed_R = false,
 			keyPressed_Space = false;
 	
 	float graphicsWidth,
@@ -22,13 +23,16 @@ public class Controller implements InputProcessor {
 	
 	public void checkMovement(Slime slime){
 		if(keyPressed_A && slime.body.getLinearVelocity().x > -slime.maxSpeed){
-			slime.body.applyLinearImpulse(-Constants.MOVE_VELOCITY/Constants.PIXELS_TO_METERS, 0, slime.body.getPosition().x, slime.body.getPosition().y, true);
+			slime.body.applyLinearImpulse((-Constants.MOVE_VELOCITY/Constants.PIXELS_TO_METERS)*slime.speedFactor, 0, slime.body.getPosition().x, slime.body.getPosition().y, true);
 		}
 		if(keyPressed_D && slime.body.getLinearVelocity().x < slime.maxSpeed){
-			slime.body.applyLinearImpulse(Constants.MOVE_VELOCITY/Constants.PIXELS_TO_METERS, 0, slime.body.getPosition().x, slime.body.getPosition().y, true);
+			slime.body.applyLinearImpulse((Constants.MOVE_VELOCITY/Constants.PIXELS_TO_METERS)*slime.speedFactor, 0, slime.body.getPosition().x, slime.body.getPosition().y, true);
 		}
 		if(keyPressed_Space && !slime.airborne){
-			slime.body.applyLinearImpulse(0, Constants.JUMP_VELOCITY/Constants.PIXELS_TO_METERS, slime.body.getPosition().x, slime.body.getPosition().y, true);
+			slime.body.applyLinearImpulse(0, (Constants.JUMP_VELOCITY/Constants.PIXELS_TO_METERS)*slime.speedFactor, slime.body.getPosition().x, slime.body.getPosition().y, true);
+		}
+		if(keyPressed_R && !slime.boostActive){
+			slime.setBoost(true);
 		}
 	}
 
@@ -39,6 +43,9 @@ public class Controller implements InputProcessor {
 		}
 		if (keycode == Input.Keys.A){
 			keyPressed_A = true;
+		}
+		if (keycode == Input.Keys.R){
+			keyPressed_R = true;
 		}
 		if (keycode == Input.Keys.SPACE){
 			keyPressed_Space = true;
@@ -54,6 +61,9 @@ public class Controller implements InputProcessor {
 		}
 		if (keycode == Input.Keys.A){
 			keyPressed_A = false;
+		}
+		if (keycode == Input.Keys.R){
+			keyPressed_R = false;
 		}
 		if (keycode == Input.Keys.SPACE){
 			keyPressed_Space = false;
