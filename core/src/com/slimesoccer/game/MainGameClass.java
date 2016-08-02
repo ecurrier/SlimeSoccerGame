@@ -90,7 +90,7 @@ public class MainGameClass extends ApplicationAdapter{
 		ball.adjustSpritePosition();
 
 		batch.setProjectionMatrix(camera.combined);
-		//debugMatrix = batch.getProjectionMatrix().cpy().scale(Constants.PIXELS_TO_METERS, Constants.PIXELS_TO_METERS, 0);
+		debugMatrix = batch.getProjectionMatrix().cpy().scale(Constants.PIXELS_TO_METERS, Constants.PIXELS_TO_METERS, 0);
 		
 		batch.begin();
 		
@@ -108,7 +108,7 @@ public class MainGameClass extends ApplicationAdapter{
 		}*/
 
 		batch.end();
-		//debugRenderer.render(world, debugMatrix); // Displays body structure lines
+		debugRenderer.render(world, debugMatrix); // Displays body structure lines
 	}
 
 	@Override

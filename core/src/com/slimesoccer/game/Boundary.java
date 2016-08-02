@@ -1,6 +1,5 @@
 package com.slimesoccer.game;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.EdgeShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -35,18 +34,21 @@ public class Boundary {
 			height = 480 / Constants.PIXELS_TO_METERS;
 			shape.set(-width / 2, -height / 2, -width / 2, height / 2);
 			fixtureDef.friction = 0f;
+			fixtureDef.restitution = 0.1f;
 			break;
 		case 2:
 			width = (-640 + 50) / Constants.PIXELS_TO_METERS;
 			height = 480 / Constants.PIXELS_TO_METERS;
 			shape.set(-width / 2, -height / 2, -width / 2, height / 2);
 			fixtureDef.friction = 0f;
+			fixtureDef.restitution = 0.1f;
 			break;
 		case 3:
 			width = 640 / Constants.PIXELS_TO_METERS;
-			height = (-480  + 50) / Constants.PIXELS_TO_METERS;
+			height = (-480  + 250) / Constants.PIXELS_TO_METERS;
 			shape.set(-width / 2, -height / 2, width / 2, -height / 2);
 			fixtureDef.friction = 0f;
+			fixtureDef.restitution = 0.1f;
 			break;
 		default:
 			break;
