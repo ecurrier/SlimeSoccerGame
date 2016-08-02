@@ -311,6 +311,7 @@ public class Game extends ApplicationAdapter {
 	/**
 	 * Displays a parabolic trajectory for the ball when enabled
 	 */
+	@SuppressWarnings("unused")
 	private void displayBallTrajectory() {
 		for (int n = 1; n <= 32; n++) {
 			float t = 6f / 60f;
@@ -319,7 +320,8 @@ public class Game extends ApplicationAdapter {
 
 			Vector2 calculation = (ball.body.getPosition().add(stepVelocity.scl(n))
 					.add(stepGravity.scl(0.5f * (n * n + n))));
-			batch.draw(trajectoryDot, calculation.x * 100f, calculation.y * 100f);
+			batch.draw(trajectoryDot, calculation.x * Constants.PIXELS_TO_METERS,
+					calculation.y * Constants.PIXELS_TO_METERS);
 		}
 	}
 
