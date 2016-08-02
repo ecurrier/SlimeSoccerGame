@@ -27,12 +27,13 @@ public class Ball{
 		texture = new Texture(path);
 		sprite = new Sprite(texture);
 		
-		startingPositionX = (sprite.getWidth() / 2) / Constants.PIXELS_TO_METERS;
-		startingPositionY = (sprite.getHeight() / 2) / Constants.PIXELS_TO_METERS;
+		startingPositionX = 0 - ((sprite.getWidth()/2)/Constants.PIXELS_TO_METERS);
+		startingPositionY = 0;
 		
 		bodyDef = new BodyDef();
 		bodyDef.type = BodyDef.BodyType.DynamicBody;
 		bodyDef.position.set(startingPositionX, startingPositionY);
+		bodyDef.linearDamping = 0.25f;
 	}
 	
 	public void createShape(){

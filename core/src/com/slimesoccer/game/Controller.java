@@ -8,21 +8,31 @@ public class Controller implements InputProcessor {
 	
 	boolean keyPressed_D = false, 
 			keyPressed_A = false,
+			keyPressed_R = false,
 			keyPressed_Space = false;
+	
+	float graphicsWidth,
+		graphicsHeight;
 	
 	public Controller() {
 		Gdx.input.setInputProcessor(this);
+		
+		graphicsHeight = Gdx.graphics.getHeight();
+		graphicsWidth = Gdx.graphics.getWidth();
 	}
 	
 	public void checkMovement(Slime slime){
 		if(keyPressed_A && slime.body.getLinearVelocity().x > -slime.maxSpeed){
-			slime.body.applyLinearImpulse(-0.80f/Constants.PIXELS_TO_METERS, 0, slime.body.getPosition().x, slime.body.getPosition().y, true);
+			slime.body.applyLinearImpulse((-Constants.MOVE_VELOCITY/Constants.PIXELS_TO_METERS)*slime.speedFactor, 0, slime.body.getPosition().x, slime.body.getPosition().y, true);
 		}
 		if(keyPressed_D && slime.body.getLinearVelocity().x < slime.maxSpeed){
-			slime.body.applyLinearImpulse(0.80f/Constants.PIXELS_TO_METERS, 0, slime.body.getPosition().x, slime.body.getPosition().y, true);
+			slime.body.applyLinearImpulse((Constants.MOVE_VELOCITY/Constants.PIXELS_TO_METERS)*slime.speedFactor, 0, slime.body.getPosition().x, slime.body.getPosition().y, true);
 		}
 		if(keyPressed_Space && !slime.airborne){
-			slime.body.applyLinearImpulse(0, 1.00f/Constants.PIXELS_TO_METERS, slime.body.getPosition().x, slime.body.getPosition().y, true);
+			slime.body.applyLinearImpulse(0, (Constants.JUMP_VELOCITY/Constants.PIXELS_TO_METERS)*slime.speedFactor, slime.body.getPosition().x, slime.body.getPosition().y, true);
+		}
+		if(keyPressed_R && !slime.boostActive){
+			slime.setBoost(true);
 		}
 	}
 
@@ -33,6 +43,9 @@ public class Controller implements InputProcessor {
 		}
 		if (keycode == Input.Keys.A){
 			keyPressed_A = true;
+		}
+		if (keycode == Input.Keys.R){
+			keyPressed_R = true;
 		}
 		if (keycode == Input.Keys.SPACE){
 			keyPressed_Space = true;
@@ -49,6 +62,9 @@ public class Controller implements InputProcessor {
 		if (keycode == Input.Keys.A){
 			keyPressed_A = false;
 		}
+		if (keycode == Input.Keys.R){
+			keyPressed_R = false;
+		}
 		if (keycode == Input.Keys.SPACE){
 			keyPressed_Space = false;
 		}
@@ -62,11 +78,33 @@ public class Controller implements InputProcessor {
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+		if(screenX < graphicsWidth/2 &&
+		   screenY > graphicsHeight/2){
+			keyPressed_A = true;
+		}
+		if(screenX >= graphicsWidth/2 &&
+		   screenY > graphicsHeight/2){
+			keyPressed_D = true;
+		}
+		if (screenY < graphicsHeight/2){
+			keyPressed_Space = true;
+		}
 		return false;
 	}
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+		if(screenX < graphicsWidth/2 &&
+		   screenY > graphicsHeight/2){
+			keyPressed_A = false;
+		}
+		if(screenX >= graphicsWidth/2 &&
+		   screenY > graphicsHeight/2){
+			keyPressed_D = false;
+		}
+		if (screenY < graphicsHeight/2){
+			keyPressed_Space = false;
+		}
 		return false;
 	}
 

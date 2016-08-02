@@ -1,6 +1,5 @@
 package com.slimesoccer.game;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -31,15 +30,15 @@ public class Goal {
 		bodyDef_top.type = BodyDef.BodyType.StaticBody;
 		
 		float width = 0;
-		float height = (-Gdx.graphics.getHeight() + 50) / Constants.PIXELS_TO_METERS;
+		float height = (-Constants.SCREEN_HEIGHT + 50) / Constants.PIXELS_TO_METERS;
 		
 		if(userDataIdentifier == "playergoal"){
-			width = (-Gdx.graphics.getWidth() + 50) / Constants.PIXELS_TO_METERS;
-			sprite.setPosition((-Gdx.graphics.getWidth() + 50) / 2, (-Gdx.graphics.getHeight() + 50) / 2);
+			width = (-Constants.SCREEN_WIDTH + 50) / Constants.PIXELS_TO_METERS;
+			sprite.setPosition((-Constants.SCREEN_WIDTH + 50) / 2, (-Constants.SCREEN_HEIGHT + 50) / 2);
 		}
 		else if(userDataIdentifier == "computergoal"){
-			width = (Gdx.graphics.getWidth() - (50 + (sprite.getWidth() * 2))) / Constants.PIXELS_TO_METERS;
-			sprite.setPosition((Gdx.graphics.getWidth() - (50 + (sprite.getWidth() * 2))) / 2, (-Gdx.graphics.getHeight() + 50) / 2);
+			width = (Constants.SCREEN_WIDTH - (50 + (sprite.getWidth() * 2))) / Constants.PIXELS_TO_METERS;
+			sprite.setPosition((Constants.SCREEN_WIDTH - (50 + (sprite.getWidth() * 2))) / 2, (-Constants.SCREEN_HEIGHT + 50) / 2);
 		}
 		
 		bodyDef_body.position.set((width / 2) + sprite.getWidth() / (Constants.PIXELS_TO_METERS * 2),
