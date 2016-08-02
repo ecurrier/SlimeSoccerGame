@@ -24,28 +24,28 @@ public class Boundary {
 		
 		switch(location){
 		case 0:
-			width = 640 / Constants.PIXELS_TO_METERS;
-			height = (480 - 50) / Constants.PIXELS_TO_METERS;
+			width = Constants.SCREEN_WIDTH / Constants.PIXELS_TO_METERS;
+			height = (Constants.SCREEN_HEIGHT - 50) / Constants.PIXELS_TO_METERS;
 			shape.set(-width / 2, -height / 2, width / 2, -height / 2);
 			fixtureDef.friction = 100f;
 			break;
 		case 1:
-			width = (640 - 50) / Constants.PIXELS_TO_METERS;
-			height = 480 / Constants.PIXELS_TO_METERS;
+			width = (Constants.SCREEN_WIDTH - 50) / Constants.PIXELS_TO_METERS;
+			height = Constants.SCREEN_HEIGHT / Constants.PIXELS_TO_METERS;
 			shape.set(-width / 2, -height / 2, -width / 2, height / 2);
 			fixtureDef.friction = 0f;
 			fixtureDef.restitution = 0.1f;
 			break;
 		case 2:
-			width = (-640 + 50) / Constants.PIXELS_TO_METERS;
-			height = 480 / Constants.PIXELS_TO_METERS;
+			width = (-Constants.SCREEN_WIDTH + 50) / Constants.PIXELS_TO_METERS;
+			height = Constants.SCREEN_HEIGHT / Constants.PIXELS_TO_METERS;
 			shape.set(-width / 2, -height / 2, -width / 2, height / 2);
 			fixtureDef.friction = 0f;
 			fixtureDef.restitution = 0.1f;
 			break;
 		case 3:
-			width = 640 / Constants.PIXELS_TO_METERS;
-			height = (-480  + 250) / Constants.PIXELS_TO_METERS;
+			width = Constants.SCREEN_WIDTH / Constants.PIXELS_TO_METERS;
+			height = (-Constants.SCREEN_HEIGHT  + 250) / Constants.PIXELS_TO_METERS;
 			shape.set(-width / 2, -height / 2, width / 2, -height / 2);
 			fixtureDef.friction = 0f;
 			fixtureDef.restitution = 0.1f;

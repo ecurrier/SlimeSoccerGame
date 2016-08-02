@@ -62,7 +62,7 @@ public class MainGameClass extends ApplicationAdapter{
 		npc = new NpcBrain(computer,ball);
 		
 		debugRenderer = new Box2DDebugRenderer();
-		camera = new OrthographicCamera(640, 480);
+		camera = new OrthographicCamera(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
 		
 		setContactListener();
 		
@@ -94,7 +94,7 @@ public class MainGameClass extends ApplicationAdapter{
 		
 		batch.begin();
 		
-		batch.draw(background, -640/2, -480/2);
+		batch.draw(background, -Constants.SCREEN_WIDTH/2, -Constants.SCREEN_HEIGHT/2);
 		drawAll(batch);
 		
 		/* TESTING - TRAJECTORY PATH  FOR AI */

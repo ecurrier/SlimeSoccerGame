@@ -1,7 +1,5 @@
 package com.slimesoccer.game;
 
-import com.badlogic.gdx.Gdx;
-
 public class NpcBrain {
 
 	private Slime npc;
