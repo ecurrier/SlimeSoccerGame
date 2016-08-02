@@ -235,11 +235,11 @@ public class Game extends ApplicationAdapter {
 	 */
 	private Ball createBallBody(FileHandle texturePath, String userDataIdentifier) {
 		Ball entity = new Ball(texturePath);
-		Body ballBody = world.createBody(ball.bodyDef);
+		Body ballBody = world.createBody(entity.bodyDef);
 
 		entity.createShape();
 		entity.setProperties();
-		ballBody.createFixture(ball.fixtureDef);
+		ballBody.createFixture(entity.fixtureDef);
 		entity.shape.dispose();
 		ballBody.setUserData(userDataIdentifier);
 		entity.body = ballBody;
