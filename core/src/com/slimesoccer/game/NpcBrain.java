@@ -4,13 +4,8 @@ public class NpcBrain {
 
 	private Slime npc;
 	private Ball ball;
-	
-	private float ball_x,
-		ball_y,
-		npc_x,
-		npc_y,
-		npc_left,
-		npc_right;
+
+	private float ball_x, ball_y, npc_x, npc_y, npc_left, npc_right;
 
 	NpcBrain(Slime npc, Ball ball) {
 		this.npc = npc;
@@ -66,8 +61,7 @@ public class NpcBrain {
 		} else {
 			// ball is going right
 
-			if ( ball.body.getLinearVelocity().y < 0 && npc.body.getLinearVelocity().x < npc.maxSpeed
-					&& !npc.airborne)
+			if (ball.body.getLinearVelocity().y < 0 && npc.body.getLinearVelocity().x < npc.maxSpeed && !npc.airborne)
 				npc.body.applyLinearImpulse(.8f / Constants.PIXELS_TO_METERS, 1.00f / Constants.PIXELS_TO_METERS,
 						npc.body.getPosition().x, npc.body.getPosition().y, true);
 			else if (npc.body.getLinearVelocity().x < npc.maxSpeed)
@@ -77,94 +71,87 @@ public class NpcBrain {
 		}
 
 	}
-	
-	public void MoveNpcAggressive(){
+
+	public void MoveNpcAggressive() {
 		ball_x = ball.body.getPosition().x;
 		npc_x = npc.body.getPosition().x;
 		ball_y = ball.body.getPosition().y;
 		npc_y = npc.body.getPosition().y;
-		
-		npc_left = npc_x - ((npc.sprite.getWidth()/2)/Constants.PIXELS_TO_METERS);
-		npc_right = npc_left + (npc.sprite.getWidth()/Constants.PIXELS_TO_METERS);
-		
-		if(calculateBallHighSpeed()){
+
+		npc_left = npc_x - ((npc.sprite.getWidth() / 2) / Constants.PIXELS_TO_METERS);
+		npc_right = npc_left + (npc.sprite.getWidth() / Constants.PIXELS_TO_METERS);
+
+		if (calculateBallHighSpeed()) {
 			commandMoveRight();
-		}
-		else if(calculateBallUnderSlime()){
+		} else if (calculateBallUnderSlime()) {
 			commandMoveRight();
-		}
-		else{
-			if (calculateBallLeft()){	
+		} else {
+			if (calculateBallLeft()) {
 				commandMoveLeft();
-			}
-			else if (calculateBallRight()){
+			} else if (calculateBallRight()) {
 				commandMoveRight();
 			}
 		}
-		
-		if(calculateJump()){
+
+		if (calculateJump()) {
 			commandJump();
 		}
 	}
-	
-	public void commandMoveRight(){
+
+	public void commandMoveRight() {
 		npc.body.applyLinearImpulse(Constants.MOVE_VELOCITY / Constants.PIXELS_TO_METERS, 0, npc.body.getPosition().x,
 				npc.body.getPosition().y, true);
 	}
-	
-	public void commandMoveLeft(){
+
+	public void commandMoveLeft() {
 		npc.body.applyLinearImpulse(-Constants.MOVE_VELOCITY / Constants.PIXELS_TO_METERS, 0, npc.body.getPosition().x,
 				npc.body.getPosition().y, true);
 	}
-	
-	public void commandJump(){
-		npc.body.applyLinearImpulse(0f, Constants.JUMP_VELOCITY / Constants.PIXELS_TO_METERS,
-				npc.body.getPosition().x, npc.body.getPosition().y, true);
+
+	public void commandJump() {
+		npc.body.applyLinearImpulse(0f, Constants.JUMP_VELOCITY / Constants.PIXELS_TO_METERS, npc.body.getPosition().x,
+				npc.body.getPosition().y, true);
 	}
-	
-	public boolean calculateBallLeft(){
-		if(npc_x > ball_x + .2 && npc.body.getLinearVelocity().x > -npc.maxSpeed){
+
+	public boolean calculateBallLeft() {
+		if (npc_x > ball_x + .2 && npc.body.getLinearVelocity().x > -npc.maxSpeed) {
 			return true;
 		}
-		
+
 		return false;
 	}
-	
-	public boolean calculateBallRight(){
-		if(npc_x < ball_x + .2 && npc.body.getLinearVelocity().x < npc.maxSpeed){
+
+	public boolean calculateBallRight() {
+		if (npc_x < ball_x + .2 && npc.body.getLinearVelocity().x < npc.maxSpeed) {
 			return true;
 		}
-		
+
 		return false;
 	}
-	
-	public boolean calculateJump(){
-		if((ball_y < (npc_y + 1) && !npc.airborne) &&
-		  ((npc_x + 0.5f) > ball_x) && ((npc_x - 0.5f) < ball_x)){
+
+	public boolean calculateJump() {
+		if ((ball_y < (npc_y + 1) && !npc.airborne) && ((npc_x + 0.5f) > ball_x) && ((npc_x - 0.5f) < ball_x)) {
 			return true;
 		}
-		
+
 		return false;
 	}
-	
-	public boolean calculateBallHighSpeed(){
-		if((ball.body.getLinearVelocity().x > 3.5f || ball.body.getLinearVelocity().x < -3.5f) &&
-			npc.body.getLinearVelocity().x < npc.maxSpeed){
+
+	public boolean calculateBallHighSpeed() {
+		if ((ball.body.getLinearVelocity().x > 3.5f || ball.body.getLinearVelocity().x < -3.5f)
+				&& npc.body.getLinearVelocity().x < npc.maxSpeed) {
 			return true;
 		}
-		
+
 		return false;
 	}
-	
-	public boolean calculateBallUnderSlime(){
-		if(ball_x > (npc_left - ((ball.sprite.getWidth()/2)/Constants.PIXELS_TO_METERS)) && 
-			ball_x < npc_right &&
-		    ball_y < npc_y &&
-		    npc.body.getLinearVelocity().x < npc.maxSpeed &&
-		    npc.airborne){
-		    	return true;
-	    }
-		   
+
+	public boolean calculateBallUnderSlime() {
+		if (ball_x > (npc_left - ((ball.sprite.getWidth() / 2) / Constants.PIXELS_TO_METERS)) && ball_x < npc_right
+				&& ball_y < npc_y && npc.body.getLinearVelocity().x < npc.maxSpeed && npc.airborne) {
+			return true;
+		}
+
 		return false;
 	}
 }

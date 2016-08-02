@@ -9,20 +9,19 @@ public class Boundary {
 	public BodyDef bodyDef;
 	public EdgeShape shape;
 	public FixtureDef fixtureDef;
-	
-	public Boundary(){
+
+	public Boundary() {
 		bodyDef = new BodyDef();
 		bodyDef.type = BodyDef.BodyType.StaticBody;
 		bodyDef.position.set(0, 0);
 	}
-	
-	public void setProperties(int location){
+
+	public void setProperties(int location) {
 		fixtureDef = new FixtureDef();
 		shape = new EdgeShape();
-		float width = 0,
-			  height = 0;
-		
-		switch(location){
+		float width = 0, height = 0;
+
+		switch (location) {
 		case 0:
 			width = Constants.SCREEN_WIDTH / Constants.PIXELS_TO_METERS;
 			height = (Constants.SCREEN_HEIGHT - 50) / Constants.PIXELS_TO_METERS;
@@ -45,7 +44,7 @@ public class Boundary {
 			break;
 		case 3:
 			width = Constants.SCREEN_WIDTH / Constants.PIXELS_TO_METERS;
-			height = (-Constants.SCREEN_HEIGHT  + 250) / Constants.PIXELS_TO_METERS;
+			height = (-Constants.SCREEN_HEIGHT + 250) / Constants.PIXELS_TO_METERS;
 			shape.set(-width / 2, -height / 2, width / 2, -height / 2);
 			fixtureDef.friction = 0f;
 			fixtureDef.restitution = 0.1f;

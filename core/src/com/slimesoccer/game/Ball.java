@@ -26,8 +26,8 @@ public class Ball{
 	public Ball(FileHandle path){
 		texture = new Texture(path);
 		sprite = new Sprite(texture);
-		
-		startingPositionX = 0 - ((sprite.getWidth()/2)/Constants.PIXELS_TO_METERS);
+
+		startingPositionX = 0 - ((sprite.getWidth() / 2) / Constants.PIXELS_TO_METERS);
 		startingPositionY = 0;
 		
 		bodyDef = new BodyDef();
