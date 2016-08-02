@@ -71,8 +71,7 @@ public class Slime {
 	}
 	
 	public void draw(SpriteBatch batch){
-		batch.draw(sprite, sprite.getX(), sprite.getY(), sprite.getOriginX(), sprite.getOriginY(), sprite.getWidth(),
-				   sprite.getHeight(), sprite.getScaleX(), sprite.getScaleY(), sprite.getRotation());
+		batch.draw(sprite, sprite.getX(), sprite.getY());
 	}
 	
 	public void setBoost(boolean active){

@@ -18,60 +18,55 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 
-public class MainGameClass extends ApplicationAdapter{
+public class Game extends ApplicationAdapter{
 	SpriteBatch batch;
 	World world;
 	Controller controller;
+	OrthographicCamera camera;
 	
 	Slime player,
 		computer;
-
+	
 	Ball ball;
-	NpcBrain npc;
-	Boundary[] boundaries = new Boundary[4];
+	
 	Goal playerGoal,
-		computerGoal;
+	computerGoal;
+	
+	Score playerScore;
+	Score computerScore;
+	
+	Boundary[] boundaries = new Boundary[4];
+	
+	NpcBrain npc;
 
 	Box2DDebugRenderer debugRenderer;
 	Matrix4 debugMatrix;
-	OrthographicCamera camera;
 	
 	Texture dot;
 	Sprite trajectoryDot;
 	
 	Sprite background;
 	
-	static Score playerScore;
-	Score computerScore;
-	
 	boolean flaggedForReset = false;
 
 	@Override
 	public void create() {
-		world = new World(new Vector2(0, -3f), true);
 		batch = new SpriteBatch();
+		world = new World(new Vector2(0, -3f), true);
 		controller = new Controller();
-		
-		player = createSlimeBody(Gdx.files.internal("Models/redslime-right.png"), "player", -2f);
-		computer = createSlimeBody(Gdx.files.internal("Models/blueslime-left.png"), "computer", 1.25f);
-		playerGoal = createGoalBody(Gdx.files.internal("Models/playergoal.png"), "playergoal");
-		computerGoal = createGoalBody(Gdx.files.internal("Models/computergoal.png"), "computergoal");
-		createBallBody();
-		createBoundaries();
-		
-		npc = new NpcBrain(computer,ball);
-		
-		debugRenderer = new Box2DDebugRenderer();
 		camera = new OrthographicCamera(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
 		
-		setContactListener();
-		
-		trajectoryDot = new Sprite(new Texture(Gdx.files.internal("Models/trajectorydot.png")));
-		
-		background = new Sprite(new Texture(Gdx.files.internal("Models/background-day.png")));
-		
+		createBodies();
 		playerScore = new Score("player");
 		computerScore = new Score("computer");
+		npc = new NpcBrain(computer, ball);
+		
+		debugRenderer = new Box2DDebugRenderer();
+		
+		trajectoryDot = new Sprite(new Texture(Gdx.files.internal("Models/trajectorydot.png")));
+		background = new Sprite(new Texture(Gdx.files.internal("Models/background-day.png")));
+		
+		setContactListener();
 	}
 
 	@Override
@@ -88,10 +83,8 @@ public class MainGameClass extends ApplicationAdapter{
 		controller.checkMovement(player);
 		npc.MoveNpcAggressive();
 		
-		player.adjustSpritePosition();
-		computer.adjustSpritePosition();
-		ball.adjustSpritePosition();
-
+		adjustBodySpritePositions();
+		
 		batch.setProjectionMatrix(camera.combined);
 		debugMatrix = batch.getProjectionMatrix().cpy().scale(Constants.PIXELS_TO_METERS, Constants.PIXELS_TO_METERS, 0);
 		
@@ -161,6 +154,27 @@ public class MainGameClass extends ApplicationAdapter{
 			
 		});
 	}
+	
+	/**
+	 * Adjusts the sprite positions of all bodies.
+	 */
+	private void adjustBodySpritePositions(){
+		player.adjustSpritePosition();
+		computer.adjustSpritePosition();
+		ball.adjustSpritePosition();
+	}
+	
+	/**
+	 * Calls the create methods for Slimes, Goals, Balls, and Boundaries.
+	 */
+	private void createBodies(){
+		player = createSlimeBody(Gdx.files.internal("Models/redslime-right.png"), "player", -2f);
+		computer = createSlimeBody(Gdx.files.internal("Models/blueslime-left.png"), "computer", 1.25f);
+		playerGoal = createGoalBody(Gdx.files.internal("Models/playergoal.png"), "playergoal");
+		computerGoal = createGoalBody(Gdx.files.internal("Models/computergoal.png"), "computergoal");
+		ball = createBallBody(Gdx.files.internal("Models/soccerball.png"), "ball");
+		createBoundaries();
+	}
 
 	/**
 	 * Creates the 4 boundaries of the world.
@@ -187,7 +201,9 @@ public class MainGameClass extends ApplicationAdapter{
 
 	/**
 	 * Creates the goal.
-	 * When the back of the goal is touched by the ball, the opposing player will have scored.
+	 * @param texturePath FileHandle path for the associated asset.
+	 * @param userDataIdentifier String name given to identify the body for collisions, etc.
+	 * @return Goal object.
 	 */
 	private Goal createGoalBody(FileHandle texturePath, String userDataIdentifier) {
 		Goal goal = new Goal(texturePath, userDataIdentifier);
@@ -205,24 +221,33 @@ public class MainGameClass extends ApplicationAdapter{
 		
 		return goal;
 	}
-
+	
 	/**
 	 * Creates the ball.
+	 * @param texturePath FileHandle path for the associated asset.
+	 * @param userDataIdentifier String name given to identify the body for collisions, etc.
+	 * @return Ball object.
 	 */
-	private void createBallBody() {
-		ball = new Ball(Gdx.files.internal("Models/soccerball.png"));
+	private Ball createBallBody(FileHandle texturePath, String userDataIdentifier){
+		ball = new Ball(texturePath);
 		Body ballBody = world.createBody(ball.bodyDef);
 		
 		ball.createShape();
 		ball.setProperties();
 		ballBody.createFixture(ball.fixtureDef);
 		ball.shape.dispose();
-		ballBody.setUserData("ball");
+		ballBody.setUserData(userDataIdentifier);
 		ball.body = ballBody;
+		
+		return ball;
 	}
 
 	/**
 	 * Creates the slime.
+	 * @param texturePath FileHandle path for the associated asset.
+	 * @param userDataIdentifier String name given to identify the body for collisions, etc.
+	 * @param positionOffset float amount to offset the spawn location of the body.
+	 * @return Slime object.
 	 */
 	private Slime createSlimeBody(FileHandle texturePath, String userDataIdentifier, float positionOffset) {
 		Slime entity = new Slime(texturePath, positionOffset);
@@ -238,6 +263,13 @@ public class MainGameClass extends ApplicationAdapter{
 		return entity;
 	}
 	
+	/**
+	 * Determines if there is a collision between two bodies.
+	 * @param contact Contact object that contains fixtures/bodies of current collision.
+	 * @param bodyA String name of the first body.
+	 * @param bodyB String name of the second body.
+	 * @return True or False.
+	 */
 	private boolean collision(Contact contact, String bodyA, String bodyB) {
 		if((contact.getFixtureA().getBody().getUserData() == bodyA &&
 	    contact.getFixtureB().getBody().getUserData() == bodyB) ||
@@ -249,6 +281,9 @@ public class MainGameClass extends ApplicationAdapter{
 		return false;
 	}
 	
+	/**
+	 * Checks all active durations and takes action accordingly if they have exceeded their duration.
+	 */
 	private void checkDurations(){
 		if(player.boostActive){
 			float currentDuration = ((System.nanoTime() - player.boostStart)/Constants.NANO);
@@ -258,6 +293,9 @@ public class MainGameClass extends ApplicationAdapter{
 		}
 	}
 	
+	/**
+	 * Displays a parabolic trajectory for the ball when enabled
+	 */
 	private void displayBallTrajectory(){
 		for(int n=1; n<=32; n++){
 			float t = 6f / 60f;
@@ -269,6 +307,10 @@ public class MainGameClass extends ApplicationAdapter{
 		}
 	}
 	
+	/**
+	 * Draws all bodies/sprites to the screen.
+	 * @param batch SpriteBatch 
+	 */
 	private void drawAll(SpriteBatch batch) {
 		player.draw(batch);
 		computer.draw(batch);
