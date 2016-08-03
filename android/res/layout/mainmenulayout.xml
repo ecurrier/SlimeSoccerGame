@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:shadowColor="#000000"
-        android:shadowRadius="4"
+        android:shadowRadius="10"
         android:text="Blob Soccer"
         android:textColor="#ffffff"
         android:textSize="72sp" />
@@ -40,7 +40,7 @@
                 android:paddingLeft="60sp"
                 android:paddingRight="60sp"
                 android:text="Start Game" />
-            
+
             <Button
                 android:id="@+id/optionsButton"
                 android:layout_width="wrap_content"
@@ -49,7 +49,48 @@
                 android:paddingLeft="60sp"
                 android:paddingRight="60sp"
                 android:text="Options" />
-            
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:weightSum="3" >
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <Button
+                android:id="@+id/easyButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="20sp"
+                android:paddingLeft="60sp"
+                android:paddingRight="60sp"
+                android:text="Easy" />
+
+            <Button
+                android:id="@+id/normalButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="20sp"
+                android:paddingLeft="60sp"
+                android:paddingRight="60sp"
+                android:text="Normal" />
+
+            <Button
+                android:id="@+id/hardButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="20sp"
+                android:paddingLeft="60sp"
+                android:paddingRight="60sp"
+                android:text="Hard" />
         </LinearLayout>
     </ViewAnimator>
 

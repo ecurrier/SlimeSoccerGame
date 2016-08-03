@@ -16,14 +16,14 @@ public class MainMenuActivity extends AndroidApplication {
 
 	ViewAnimator viewAnimator;
 	Animation slideLeft, slideRight;
-	Button startButton, optionsButton;
+	Button startButton, optionsButton, easyButton, normalButton, hardButton;
 
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
 		initialize(listener);
 
-		initializeAnimations();
 		initializeLayout();
+		initializeAnimations();
 		initializeButtons();
 	}
 
@@ -50,9 +50,36 @@ public class MainMenuActivity extends AndroidApplication {
 		startButton = (Button) findViewById(R.id.startButton);
 		optionsButton = (Button) findViewById(R.id.optionsButton);
 
+		easyButton = (Button) findViewById(R.id.easyButton);
+		normalButton = (Button) findViewById(R.id.normalButton);
+		hardButton = (Button) findViewById(R.id.hardButton);
+
 		startButton.setOnClickListener(new Button.OnClickListener() {
 			public void onClick(View v) {
+				viewAnimator.showNext();
+			}
+		});
+
+		easyButton.setOnClickListener(new Button.OnClickListener() {
+			public void onClick(View v) {
 				Intent intent = new Intent(MainMenuActivity.this, AndroidLauncher.class);
+				intent.putExtra("difficulty", "easy");
+				startActivity(intent);
+			}
+		});
+
+		normalButton.setOnClickListener(new Button.OnClickListener() {
+			public void onClick(View v) {
+				Intent intent = new Intent(MainMenuActivity.this, AndroidLauncher.class);
+				intent.putExtra("difficulty", "normal");
+				startActivity(intent);
+			}
+		});
+
+		hardButton.setOnClickListener(new Button.OnClickListener() {
+			public void onClick(View v) {
+				Intent intent = new Intent(MainMenuActivity.this, AndroidLauncher.class);
+				intent.putExtra("difficulty", "hard");
 				startActivity(intent);
 			}
 		});
