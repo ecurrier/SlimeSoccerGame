@@ -53,21 +53,26 @@ public class Score {
 		font = generator.generateFont(parameter);
 		generator.dispose();
 
-		GlyphLayout layout = new GlyphLayout();
-		layout.setText(font, name);
-		fontWidth = layout.width;
+		updateGlyphWidth();
 	}
 
 	public void setName(int score) {
 		name = score + "";
+		updateGlyphWidth();
 
 		if (identifier == "player") {
 			x = (0 - fontWidth) - widthOffset;
-			y = (480 - 50) / 2;
+			y = (Constants.SCREEN_HEIGHT - 50) / 2;
 		} else if (identifier == "computer") {
 			x = 0 + widthOffset;
-			y = (480 - 50) / 2;
+			y = (Constants.SCREEN_HEIGHT - 50) / 2;
 		}
+	}
+	
+	public void updateGlyphWidth(){
+		GlyphLayout layout = new GlyphLayout();
+		layout.setText(font, name);
+		fontWidth = layout.width;
 	}
 
 }
