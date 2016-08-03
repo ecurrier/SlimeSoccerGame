@@ -37,7 +37,7 @@ public class MainMenuActivity extends AndroidApplication {
 		FrameLayout layout = new FrameLayout(this);
 
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
-		View gameView = initializeForView(new Game(), config);
+		View gameView = initializeForView(new Game(false), config);
 
 		View view = getLayoutInflater().inflate(R.layout.mainmenulayout, null);
 

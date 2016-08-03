@@ -1,15 +1,19 @@
 package com.slimesoccer.game;
 
+import java.util.Random;
+
 public class NpcBrain {
 
 	private Slime npc;
 	private Ball ball;
+	private boolean rightSide;
 
 	private float ball_x, ball_y, npc_x, npc_y, npc_left, npc_right;
 
-	NpcBrain(Slime npc, Ball ball) {
+	NpcBrain(Slime npc, Ball ball, boolean rightSide) {
 		this.npc = npc;
 		this.ball = ball;
+		this.rightSide = rightSide;
 	}
 
 	public void MoveNpcEasy() {
@@ -82,9 +86,19 @@ public class NpcBrain {
 		npc_right = npc_left + (npc.sprite.getWidth() / Constants.PIXELS_TO_METERS);
 
 		if (calculateBallHighSpeed()) {
-			commandMoveRight();
+			if(rightSide){
+				commandMoveRight();
+			}
+			else{
+				commandMoveLeft();
+			}
 		} else if (calculateBallUnderSlime()) {
-			commandMoveRight();
+			if(rightSide){
+				commandMoveRight();
+			}
+			else{
+				commandMoveLeft();
+			}
 		} else {
 			if (calculateBallLeft()) {
 				commandMoveLeft();
@@ -114,7 +128,12 @@ public class NpcBrain {
 	}
 
 	public boolean calculateBallLeft() {
-		if (npc_x > ball_x + .2 && npc.body.getLinearVelocity().x > -npc.maxSpeed) {
+		float offset = 0.2f;
+		if(!rightSide){
+			offset = -0.2f;
+		}
+		
+		if (npc_x > ball_x + offset && npc.body.getLinearVelocity().x > -npc.maxSpeed) {
 			return true;
 		}
 
@@ -122,7 +141,12 @@ public class NpcBrain {
 	}
 
 	public boolean calculateBallRight() {
-		if (npc_x < ball_x + .2 && npc.body.getLinearVelocity().x < npc.maxSpeed) {
+		float offset = 0.2f;
+		if(!rightSide){
+			offset = -0.2f;
+		}
+		
+		if (npc_x < ball_x + offset && npc.body.getLinearVelocity().x < npc.maxSpeed) {
 			return true;
 		}
 
@@ -130,7 +154,10 @@ public class NpcBrain {
 	}
 
 	public boolean calculateJump() {
-		if ((ball_y < (npc_y + 1) && !npc.airborne) && ((npc_x + 0.5f) > ball_x) && ((npc_x - 0.5f) < ball_x)) {
+		Random rand = new Random();
+		float yOffset = rand.nextFloat() * (1.25f - 0.75f) + 0.75f;
+		
+		if ((ball_y < (npc_y + yOffset) && !npc.airborne) && ((npc_x + 0.5f) > ball_x) && ((npc_x - 0.5f) < ball_x)) {
 			return true;
 		}
 

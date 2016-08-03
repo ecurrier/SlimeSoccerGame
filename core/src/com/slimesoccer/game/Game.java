@@ -35,7 +35,7 @@ public class Game extends ApplicationAdapter {
 
 	Boundary[] boundaries = new Boundary[4];
 
-	NpcBrain npc;
+	NpcBrain computerBrain, playerBrain;
 
 	Box2DDebugRenderer debugRenderer;
 	Matrix4 debugMatrix;
@@ -46,6 +46,11 @@ public class Game extends ApplicationAdapter {
 	Sprite background;
 
 	boolean flaggedForReset = false;
+	boolean realGame = false;
+
+	public Game(boolean realGame) {
+		this.realGame = realGame;
+	}
 
 	@Override
 	public void create() {
@@ -56,8 +61,11 @@ public class Game extends ApplicationAdapter {
 
 		createBodies();
 		playerScore = new Score("player");
+		if (!realGame) {
+			playerBrain = new NpcBrain(player, ball, false);
+		}
 		computerScore = new Score("computer");
-		npc = new NpcBrain(computer, ball);
+		computerBrain = new NpcBrain(computer, ball, true);
 
 		debugRenderer = new Box2DDebugRenderer();
 
@@ -78,25 +86,31 @@ public class Game extends ApplicationAdapter {
 
 		checkDurations();
 
-		controller.checkMovement(player);
-		npc.MoveNpcAggressive();
+		if (realGame) {
+			controller.checkMovement(player);
+		} else {
+			playerBrain.MoveNpcAggressive();
+		}
+		computerBrain.MoveNpcAggressive();
 
 		adjustBodySpritePositions();
 
 		batch.setProjectionMatrix(camera.combined);
-		//debugMatrix = batch.getProjectionMatrix().cpy().scale(Constants.PIXELS_TO_METERS, Constants.PIXELS_TO_METERS,
-		//		0);
+		// debugMatrix =
+		// batch.getProjectionMatrix().cpy().scale(Constants.PIXELS_TO_METERS,
+		// Constants.PIXELS_TO_METERS,
+		// 0);
 
 		batch.begin();
 
 		batch.draw(background, -Constants.SCREEN_WIDTH / 2, -Constants.SCREEN_HEIGHT / 2);
 		drawAll(batch);
 
-		//displayBallTrajectory();
+		// displayBallTrajectory();
 
 		batch.end();
-		//debugRenderer.render(world, debugMatrix); // Displays body structure
-													// lines
+		// debugRenderer.render(world, debugMatrix); // Displays body structure
+		// lines
 	}
 
 	@Override
@@ -337,8 +351,11 @@ public class Game extends ApplicationAdapter {
 		ball.draw(batch);
 		playerGoal.draw(batch);
 		computerGoal.draw(batch);
-		playerScore.draw(batch);
-		computerScore.draw(batch);
+
+		if (realGame) {
+			playerScore.draw(batch);
+			computerScore.draw(batch);
+		}
 	}
 
 	public void resetPositions() {
