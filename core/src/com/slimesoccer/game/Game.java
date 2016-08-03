@@ -84,18 +84,18 @@ public class Game extends ApplicationAdapter {
 		adjustBodySpritePositions();
 
 		batch.setProjectionMatrix(camera.combined);
-		debugMatrix = batch.getProjectionMatrix().cpy().scale(Constants.PIXELS_TO_METERS, Constants.PIXELS_TO_METERS,
-				0);
+		//debugMatrix = batch.getProjectionMatrix().cpy().scale(Constants.PIXELS_TO_METERS, Constants.PIXELS_TO_METERS,
+		//		0);
 
 		batch.begin();
 
 		batch.draw(background, -Constants.SCREEN_WIDTH / 2, -Constants.SCREEN_HEIGHT / 2);
 		drawAll(batch);
 
-		// displayBallTrajectory();
+		//displayBallTrajectory();
 
 		batch.end();
-		debugRenderer.render(world, debugMatrix); // Displays body structure
+		//debugRenderer.render(world, debugMatrix); // Displays body structure
 													// lines
 	}
 
