@@ -96,10 +96,6 @@ public class Game extends ApplicationAdapter {
 		adjustBodySpritePositions();
 
 		batch.setProjectionMatrix(camera.combined);
-		// debugMatrix =
-		// batch.getProjectionMatrix().cpy().scale(Constants.PIXELS_TO_METERS,
-		// Constants.PIXELS_TO_METERS,
-		// 0);
 
 		batch.begin();
 
@@ -109,8 +105,6 @@ public class Game extends ApplicationAdapter {
 		// displayBallTrajectory();
 
 		batch.end();
-		// debugRenderer.render(world, debugMatrix); // Displays body structure
-		// lines
 	}
 
 	@Override

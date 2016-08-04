@@ -16,66 +16,6 @@ public class NpcBrain {
 		this.rightSide = rightSide;
 	}
 
-	public void MoveNpcEasy() {
-		float ball_x = ball.body.getPosition().x;
-		float npc_x = npc.body.getPosition().x;
-
-		if (npc_x > ball_x + .2 && npc.body.getLinearVelocity().x > -npc.maxSpeed)
-			npc.body.applyLinearImpulse(-0.80f / Constants.PIXELS_TO_METERS, 0, npc.body.getPosition().x,
-					npc.body.getPosition().y, true);
-		else if (npc_x < ball_x + .2 && npc.body.getLinearVelocity().x < npc.maxSpeed)
-			npc.body.applyLinearImpulse(0.80f / Constants.PIXELS_TO_METERS, 0, npc.body.getPosition().x,
-					npc.body.getPosition().y, true);
-	}
-
-	public void MoveNpcHard() {
-		float ball_x = ball.body.getPosition().x;
-		float npc_x = npc.body.getPosition().x;
-
-		float ball_y = ball.body.getPosition().y;
-		float npc_y = npc.body.getPosition().y;
-
-		// Check if ball is going left or right
-		if (ball.body.getLinearVelocity().x <= 0) {
-			// ball is going left
-
-			// check if jump is necessary
-			if (!npc.airborne && ball.body.getLinearVelocity().y < 0) {
-				// jump
-				if (npc_y > ball_y + 10 / Constants.PIXELS_TO_METERS
-						&& npc.body.getLinearVelocity().x > -npc.maxSpeed) {
-					npc.body.applyLinearImpulse(-.8f / Constants.PIXELS_TO_METERS, 1.00f / Constants.PIXELS_TO_METERS,
-							npc.body.getPosition().x, npc.body.getPosition().y, true);
-				} else if (npc.body.getLinearVelocity().x < npc.maxSpeed && !npc.airborne) {
-					npc.body.applyLinearImpulse(.8f / Constants.PIXELS_TO_METERS, 1.00f / Constants.PIXELS_TO_METERS,
-							npc.body.getPosition().x, npc.body.getPosition().y, true);
-				}
-			} else {
-				// no jump
-				if (npc_x > ball_x + 10 / Constants.PIXELS_TO_METERS
-						&& npc.body.getLinearVelocity().x > -npc.maxSpeed) {
-					npc.body.applyLinearImpulse(-.8f / Constants.PIXELS_TO_METERS, 0, npc.body.getPosition().x,
-							npc.body.getPosition().y, true);
-				} else if (npc_x < ball_x + 10 / Constants.PIXELS_TO_METERS
-						&& npc.body.getLinearVelocity().x < npc.maxSpeed) {
-					npc.body.applyLinearImpulse(.8f / Constants.PIXELS_TO_METERS, 0, npc.body.getPosition().x,
-							npc.body.getPosition().y, true);
-				}
-			}
-		} else {
-			// ball is going right
-
-			if (ball.body.getLinearVelocity().y < 0 && npc.body.getLinearVelocity().x < npc.maxSpeed && !npc.airborne)
-				npc.body.applyLinearImpulse(.8f / Constants.PIXELS_TO_METERS, 1.00f / Constants.PIXELS_TO_METERS,
-						npc.body.getPosition().x, npc.body.getPosition().y, true);
-			else if (npc.body.getLinearVelocity().x < npc.maxSpeed)
-				npc.body.applyLinearImpulse(.8f / Constants.PIXELS_TO_METERS, 0, npc.body.getPosition().x,
-						npc.body.getPosition().y, true);
-
-		}
-
-	}
-
 	public void MoveNpcAggressive() {
 		ball_x = ball.body.getPosition().x;
 		npc_x = npc.body.getPosition().x;
@@ -86,21 +26,21 @@ public class NpcBrain {
 		npc_right = npc_left + (npc.sprite.getWidth() / Constants.PIXELS_TO_METERS);
 
 		if (calculateBallHighSpeed()) {
-			if(rightSide){
+			if (rightSide) {
 				commandMoveRight();
-			}
-			else{
+			} else {
 				commandMoveLeft();
 			}
 		} else if (calculateBallUnderSlime()) {
-			if(rightSide){
+			if (rightSide) {
 				commandMoveRight();
-			}
-			else{
+			} else {
 				commandMoveLeft();
 			}
 		} else {
-			if (calculateBallLeft()) {
+			if (calculateBallCentered()) {
+				npc.body.setLinearVelocity(0, npc.body.getLinearVelocity().y);
+			} else if (calculateBallLeft()) {
 				commandMoveLeft();
 			} else if (calculateBallRight()) {
 				commandMoveRight();
@@ -127,12 +67,27 @@ public class NpcBrain {
 				npc.body.getPosition().y, true);
 	}
 
+	public boolean calculateBallCentered() {
+		float offsetLeft = 0.2f;
+		float offsetRight = 0.3f;
+		if (rightSide) {
+			offsetLeft *= -1;
+			offsetRight *= -1;
+		}
+
+		if (npc_x + offsetLeft < ball_x && npc_x + offsetRight > ball_x) {
+			return true;
+		}
+
+		return false;
+	}
+
 	public boolean calculateBallLeft() {
 		float offset = 0.2f;
-		if(!rightSide){
+		if (!rightSide) {
 			offset = -0.2f;
 		}
-		
+
 		if (npc_x > ball_x + offset && npc.body.getLinearVelocity().x > -npc.maxSpeed) {
 			return true;
 		}
@@ -142,10 +97,10 @@ public class NpcBrain {
 
 	public boolean calculateBallRight() {
 		float offset = 0.2f;
-		if(!rightSide){
+		if (!rightSide) {
 			offset = -0.2f;
 		}
-		
+
 		if (npc_x < ball_x + offset && npc.body.getLinearVelocity().x < npc.maxSpeed) {
 			return true;
 		}
@@ -156,7 +111,7 @@ public class NpcBrain {
 	public boolean calculateJump() {
 		Random rand = new Random();
 		float yOffset = rand.nextFloat() * (1.25f - 0.75f) + 0.75f;
-		
+
 		if ((ball_y < (npc_y + yOffset) && !npc.airborne) && ((npc_x + 0.5f) > ball_x) && ((npc_x - 0.5f) < ball_x)) {
 			return true;
 		}
@@ -166,7 +121,7 @@ public class NpcBrain {
 
 	public boolean calculateBallHighSpeed() {
 		if ((ball.body.getLinearVelocity().x > 3.5f || ball.body.getLinearVelocity().x < -3.5f)
-				&& npc.body.getLinearVelocity().x < npc.maxSpeed) {
+				&& npc.body.getLinearVelocity().x < npc.maxSpeed && npc.body.getLinearVelocity().x > -npc.maxSpeed) {
 			return true;
 		}
 
