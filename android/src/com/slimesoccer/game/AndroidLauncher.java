@@ -8,9 +8,13 @@ import com.slimesoccer.game.Game;
 
 public class AndroidLauncher extends AndroidApplication {
 	@Override
-	protected void onCreate (Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
+
+		Bundle extras = getIntent().getExtras();
+		String difficulty = extras.getString("difficulty");
+
 		initialize(new Game(true), config);
 	}
 }

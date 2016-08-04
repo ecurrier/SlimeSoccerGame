@@ -68,8 +68,8 @@ public class NpcBrain {
 	}
 
 	public boolean calculateBallCentered() {
-		float offsetLeft = 0.2f;
-		float offsetRight = 0.3f;
+		float offsetLeft = 0.175f;
+		float offsetRight = 0.225f;
 		if (rightSide) {
 			offsetLeft *= -1;
 			offsetRight *= -1;

@@ -6,17 +6,23 @@ import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ViewAnimator;
 
-public class MainMenuActivity extends AndroidApplication {
+public class MainMenuActivity extends AndroidApplication implements OnClickListener {
 
 	ViewAnimator viewAnimator;
 	Animation slideLeft, slideRight;
 	Button startButton, optionsButton, easyButton, normalButton, hardButton;
+	OnClickListener clickListener = new OnClickListener() {
+		public void onClick(View v) {
+
+		}
+	};
 
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
@@ -54,35 +60,32 @@ public class MainMenuActivity extends AndroidApplication {
 		normalButton = (Button) findViewById(R.id.normalButton);
 		hardButton = (Button) findViewById(R.id.hardButton);
 
-		startButton.setOnClickListener(new Button.OnClickListener() {
-			public void onClick(View v) {
-				viewAnimator.showNext();
-			}
-		});
+		startButton.setOnClickListener(this);
+		easyButton.setOnClickListener(this);
+		normalButton.setOnClickListener(this);
+		hardButton.setOnClickListener(this);
+	}
 
-		easyButton.setOnClickListener(new Button.OnClickListener() {
-			public void onClick(View v) {
-				Intent intent = new Intent(MainMenuActivity.this, AndroidLauncher.class);
-				intent.putExtra("difficulty", "easy");
-				startActivity(intent);
-			}
-		});
+	public void launchGame(String difficulty) {
+		Intent intent = new Intent(MainMenuActivity.this, AndroidLauncher.class);
+		intent.putExtra("difficulty", difficulty);
+		startActivity(intent);
+	}
 
-		normalButton.setOnClickListener(new Button.OnClickListener() {
-			public void onClick(View v) {
-				Intent intent = new Intent(MainMenuActivity.this, AndroidLauncher.class);
-				intent.putExtra("difficulty", "normal");
-				startActivity(intent);
-			}
-		});
+	@Override
+	public void onClick(View v) {
+		if (v == startButton) {
+			viewAnimator.showNext();
+		} else if (v == optionsButton) {
+			launchGame("easy");
+		} else if (v == easyButton) {
+			launchGame("normal");
+		} else if (v == normalButton) {
+			launchGame("hard");
+		} else if (v == hardButton) {
 
-		hardButton.setOnClickListener(new Button.OnClickListener() {
-			public void onClick(View v) {
-				Intent intent = new Intent(MainMenuActivity.this, AndroidLauncher.class);
-				intent.putExtra("difficulty", "hard");
-				startActivity(intent);
-			}
-		});
+		}
+
 	}
 
 }
