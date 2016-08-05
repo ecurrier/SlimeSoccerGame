@@ -14,7 +14,7 @@
         android:layout_gravity="center_horizontal"
         android:shadowColor="#000000"
         android:shadowRadius="10"
-        android:text="Blob Soccer"
+        android:text="Slime Soccer"
         android:textColor="#ffffff"
         android:textSize="72sp" />
 
