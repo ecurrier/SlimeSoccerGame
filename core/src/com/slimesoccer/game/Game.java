@@ -2,6 +2,7 @@ package com.slimesoccer.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -23,6 +24,7 @@ public class Game extends ApplicationAdapter {
 	World world;
 	Controller controller;
 	OrthographicCamera camera;
+	float timeStep;
 
 	Slime player, computer;
 	NpcBrain computerBrain, playerBrain;
@@ -33,6 +35,8 @@ public class Game extends ApplicationAdapter {
 	Score playerScore, computerScore;
 	int scoreLimit = 5;
 
+	Text gameOverText, three, two, one, countDownText;
+
 	Boundary[] boundaries = new Boundary[4];
 
 	Box2DDebugRenderer debugRenderer;
@@ -42,7 +46,13 @@ public class Game extends ApplicationAdapter {
 	Sprite trajectoryDot, background;
 
 	boolean flaggedForReset = false, realGame = false, ballUnderPlayer = false, ballUnderComputer = false,
-			ballOnGround = false;
+			ballOnGround = false, drawThree = false, drawTwo = false, drawOne = false;
+
+	public enum State {
+		PAUSE, RUN, RESUME, STOPPED
+	}
+
+	private State state = State.RUN;
 
 	public interface MyGameCallBack {
 		public void startActivity();
@@ -67,6 +77,7 @@ public class Game extends ApplicationAdapter {
 		soundEffects = new SoundEffects();
 		soundEffects.CrowdStart();
 		camera = new OrthographicCamera(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
+		timeStep = 1f / 60f;
 
 		createBodies();
 		controller.ball = ball;
@@ -83,12 +94,16 @@ public class Game extends ApplicationAdapter {
 		background = new Sprite(new Texture(Gdx.files.internal("Models/background-day.png")));
 
 		setContactListener();
+
+		three = new Text("3");
+		two = new Text("2");
+		one = new Text("1");
 	}
 
 	@Override
 	public void render() {
 		camera.update();
-		world.step(1f / 60f, 6, 2);
+		world.step(timeStep, 6, 2);
 		checkForReset();
 
 		Gdx.gl.glClearColor(1, 1, 1, 1);
@@ -190,11 +205,10 @@ public class Game extends ApplicationAdapter {
 	private void checkBallSquished() {
 		float ballX = ball.body.getPosition().x;
 		float ballY = ball.body.getPosition().y;
-		
-		if(ballUnderPlayer && ballOnGround){
+
+		if (ballUnderPlayer && ballOnGround) {
 			ball.body.applyLinearImpulse(0.001f, 0f, ballX, ballY, true);
-		}
-		else if(ballUnderComputer && ballOnGround){
+		} else if (ballUnderComputer && ballOnGround) {
 			ball.body.applyLinearImpulse(-0.001f, 0f, ballX, ballY, true);
 		}
 	}
@@ -397,6 +411,17 @@ public class Game extends ApplicationAdapter {
 			playerScore.draw(batch);
 			computerScore.draw(batch);
 		}
+
+		if (drawOne) {
+			one.font.draw(batch, one.message, one.x, one.y);
+		} else if (drawTwo) {
+			two.font.draw(batch, two.message, two.x, two.y);
+		} else if (drawThree) {
+			three.font.draw(batch, three.message, three.x, three.y);
+		}
+		if (state == State.STOPPED) {
+			drawGameOverText();
+		}
 	}
 
 	public void resetPositions() {
@@ -410,15 +435,113 @@ public class Game extends ApplicationAdapter {
 
 		if (flaggedForReset) {
 			resetPositions();
+			adjustBodySpritePositions();
+			countDownAfterGoal(3);
 			flaggedForReset = false;
+		}
+	}
+
+	public void resetGame() {
+		if (Gdx.app.getType() == ApplicationType.Desktop) {
+			state = State.RUN;
+			playerScore.score = -1;
+			playerScore.incrementScore();
+			computerScore.score = -1;
+			computerScore.incrementScore();
+		} else if (Gdx.app.getType() == ApplicationType.Android) {
+			myGameCallBack.startActivity();
 		}
 	}
 
 	public void checkForWin() {
 		if (playerScore.score >= scoreLimit) {
-			myGameCallBack.startActivity();
+			endGame("Player");
+			flaggedForReset = false;
 		} else if (computerScore.score >= scoreLimit) {
-			myGameCallBack.startActivity();
+			endGame("Computer");
+			flaggedForReset = false;
 		}
+	}
+
+	public void drawGameOverText() {
+		gameOverText.font.draw(batch, gameOverText.message, gameOverText.x, gameOverText.y);
+	}
+
+	public void endGame(String winner) {
+		state = State.STOPPED;
+		gameOverText = new Text(winner + " wins!!!");
+		resetPositions();
+		adjustBodySpritePositions();
+		countDownTimer(5);
+	}
+
+	public void countDownAfterGoal(final int time) {
+
+		timeStep = 0f;
+		state = State.PAUSE;
+		new Thread(new Runnable() {
+			int threadTime = time;
+			boolean timerRunning = true;
+
+			@Override
+			public void run() {
+				while (timerRunning) {
+					try {
+						if (threadTime == 0) {
+							timerRunning = false;
+							timeStep = 1f / 60f;
+							state = State.RUN;
+							drawThree = false;
+							drawTwo = false;
+							drawOne  = false;
+							return;
+						} else if (threadTime == 3) {
+							drawThree = true;
+						} else if (threadTime == 2) {
+							drawTwo = true;
+						} else if (threadTime == 1) {
+							drawOne = true;
+						}
+
+						threadTime--;
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+
+			}
+
+		}).start();
+	}
+
+	public void countDownTimer(final int time) {
+
+		timeStep = 0f;
+		new Thread(new Runnable() {
+			int threadTime = time;
+			boolean timerRunning = true;
+
+			@Override
+			public void run() {
+				while (timerRunning) {
+					try {
+						Thread.sleep(1000);
+						if (threadTime == 0) {
+							timerRunning = false;
+							resetGame();
+							timeStep = 1f / 60f;
+							return;
+						} else {
+							threadTime--;
+						}
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+
+			}
+
+		}).start();
 	}
 }
