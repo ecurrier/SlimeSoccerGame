@@ -7,6 +7,8 @@ import com.badlogic.gdx.InputProcessor;
 public class Controller implements InputProcessor {
 
 	boolean keyPressed_D = false, keyPressed_A = false, keyPressed_R = false, keyPressed_Space = false;
+	Physics physics;
+	Ball ball;
 
 	float graphicsWidth, graphicsHeight;
 
@@ -15,9 +17,13 @@ public class Controller implements InputProcessor {
 
 		graphicsHeight = Gdx.graphics.getHeight();
 		graphicsWidth = Gdx.graphics.getWidth();
+		physics = new Physics();
 	}
 
 	public void checkMovement(Slime slime) {
+		float slimeLeft = slime.body.getPosition().x - ((slime.sprite.getWidth() / 2) / Constants.PIXELS_TO_METERS);
+		float slimeRight = slimeLeft + (slime.sprite.getWidth() / Constants.PIXELS_TO_METERS);
+
 		if (keyPressed_A && slime.body.getLinearVelocity().x > -slime.maxSpeed) {
 			slime.body.applyLinearImpulse((-Constants.MOVE_VELOCITY / Constants.PIXELS_TO_METERS) * slime.speedFactor,
 					0, slime.body.getPosition().x, slime.body.getPosition().y, true);
@@ -32,6 +38,10 @@ public class Controller implements InputProcessor {
 		}
 		if (keyPressed_R && !slime.boostActive) {
 			slime.setBoost(true);
+		}
+		if (physics.calculateBallUnderSlime(slime, ball, slimeLeft, slimeRight, slime.body.getPosition().y,
+				ball.body.getPosition().x, ball.body.getPosition().y)) {
+			ball.body.applyLinearImpulse(0.002f, 0f, ball.body.getPosition().x, ball.body.getPosition().y, true);
 		}
 	}
 

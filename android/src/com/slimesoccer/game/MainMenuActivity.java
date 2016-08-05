@@ -77,13 +77,13 @@ public class MainMenuActivity extends AndroidApplication implements OnClickListe
 		if (v == startButton) {
 			viewAnimator.showNext();
 		} else if (v == optionsButton) {
-			launchGame("easy");
+			
 		} else if (v == easyButton) {
-			launchGame("normal");
+			launchGame("easy");
 		} else if (v == normalButton) {
-			launchGame("hard");
+			launchGame("normal");
 		} else if (v == hardButton) {
-
+			launchGame("hard");
 		}
 
 	}

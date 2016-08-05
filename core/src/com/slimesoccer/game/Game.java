@@ -32,6 +32,7 @@ public class Game extends ApplicationAdapter {
 
 	Score playerScore;
 	Score computerScore;
+	int scoreLimit = 5;
 
 	Boundary[] boundaries = new Boundary[4];
 
@@ -47,6 +48,16 @@ public class Game extends ApplicationAdapter {
 
 	boolean flaggedForReset = false;
 	boolean realGame = false;
+	
+	public interface MyGameCallBack {
+        public void startActivity();
+    }
+	
+	private MyGameCallBack myGameCallBack;
+	
+	public void setMyGameCallBack(MyGameCallBack callBack){
+		myGameCallBack = callBack;
+	}
 
 	public Game(boolean realGame) {
 		this.realGame = realGame;
@@ -60,6 +71,7 @@ public class Game extends ApplicationAdapter {
 		camera = new OrthographicCamera(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
 
 		createBodies();
+		controller.ball = ball;
 		playerScore = new Score("player");
 		if (!realGame) {
 			playerBrain = new NpcBrain(player, ball, false);
@@ -359,9 +371,19 @@ public class Game extends ApplicationAdapter {
 	}
 
 	public void checkForReset() {
+		checkForWin();
+
 		if (flaggedForReset) {
 			resetPositions();
 			flaggedForReset = false;
+		}
+	}
+
+	public void checkForWin() {
+		if (playerScore.score >= scoreLimit) {
+			myGameCallBack.startActivity();
+		} else if (computerScore.score >= scoreLimit) {
+			myGameCallBack.startActivity();
 		}
 	}
 }
