@@ -74,16 +74,8 @@ public class Physics {
 
 	public boolean calculateBallHighSpeed(Ball ball, Slime slime) {
 		if ((ball.body.getLinearVelocity().x > 3.5f || ball.body.getLinearVelocity().x < -3.5f)
-				&& slime.body.getLinearVelocity().x < slime.maxSpeed && slime.body.getLinearVelocity().x > -slime.maxSpeed) {
-			return true;
-		}
-
-		return false;
-	}
-
-	public boolean calculateBallUnderSlime(Slime slime, Ball ball, float slimeLeft, float slimeRight, float slimeY, float ballX, float ballY) {
-		if (ballX > (slimeLeft - ((ball.sprite.getWidth() / 2) / Constants.PIXELS_TO_METERS)) && ballX < slimeRight
-				&& ballY < slimeY && slime.body.getLinearVelocity().x < slime.maxSpeed && slime.airborne) {
+				&& slime.body.getLinearVelocity().x < slime.maxSpeed
+				&& slime.body.getLinearVelocity().x > -slime.maxSpeed) {
 			return true;
 		}
 
