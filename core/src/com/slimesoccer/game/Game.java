@@ -30,8 +30,8 @@ public class Game extends ApplicationAdapter {
 
 	Goal playerGoal, computerGoal;
 
-	Score playerScore;
-	Score computerScore;
+	Score playerScore, computerScore;
+	int scoreLimit = 5;
 
 	Boundary[] boundaries = new Boundary[4];
 
@@ -45,8 +45,18 @@ public class Game extends ApplicationAdapter {
 
 	Sprite background;
 
-	boolean flaggedForReset = false;
-	boolean realGame = false; // Flag to determine if a 'real' game is occurring. If false, then it is most likely executing a game between two AI for the menu background.
+	boolean flaggedForReset = false, realGame = false, ballUnderPlayer = false, ballUnderComputer = false,
+			ballOnGround = false;
+
+	public interface MyGameCallBack {
+		public void startActivity();
+	}
+
+	private MyGameCallBack myGameCallBack;
+
+	public void setMyGameCallBack(MyGameCallBack callBack) {
+		myGameCallBack = callBack;
+	}
 
 	public Game(boolean realGame, String difficulty) {
 		this.realGame = realGame;
@@ -60,6 +70,7 @@ public class Game extends ApplicationAdapter {
 		camera = new OrthographicCamera(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
 
 		createBodies();
+		controller.ball = ball;
 		playerScore = new Score("player");
 		if (!realGame) {
 			playerBrain = new NpcBrain(player, ball, false);
@@ -85,25 +96,12 @@ public class Game extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		checkDurations();
-
-		if (realGame) {
-			controller.checkMovement(player);
-		} else {
-			playerBrain.MoveNpcAggressive();
-		}
-		computerBrain.MoveNpcAggressive();
-
+		moveBodies();
 		adjustBodySpritePositions();
 
 		batch.setProjectionMatrix(camera.combined);
-
 		batch.begin();
-
-		batch.draw(background, -Constants.SCREEN_WIDTH / 2, -Constants.SCREEN_HEIGHT / 2);
 		drawAll(batch);
-
-		// displayBallTrajectory();
-
 		batch.end();
 	}
 
@@ -139,6 +137,15 @@ public class Game extends ApplicationAdapter {
 					playerScore.incrementScore();
 					flaggedForReset = true;
 				}
+				if (collision(contact, "ball", "player")) {
+					ballUnderPlayer = true;
+				}
+				if (collision(contact, "ball", "computer")) {
+					ballUnderComputer = true;
+				}
+				if (collision(contact, "ball", "ground")) {
+					ballOnGround = true;
+				}
 			}
 
 			@Override
@@ -148,6 +155,15 @@ public class Game extends ApplicationAdapter {
 				}
 				if (collision(contact, "ground", "computer")) {
 					computer.airborne = true;
+				}
+				if (collision(contact, "ball", "player")) {
+					ballUnderPlayer = false;
+				}
+				if (collision(contact, "ball", "computer")) {
+					ballUnderComputer = false;
+				}
+				if (collision(contact, "ball", "ground")) {
+					ballOnGround = false;
 				}
 
 			}
@@ -161,6 +177,29 @@ public class Game extends ApplicationAdapter {
 			}
 
 		});
+	}
+
+	private void checkBallSquished() {
+		float ballX = ball.body.getPosition().x;
+		float ballY = ball.body.getPosition().y;
+		
+		if(ballUnderPlayer && ballOnGround){
+			ball.body.applyLinearImpulse(0.001f, 0f, ballX, ballY, true);
+		}
+		else if(ballUnderComputer && ballOnGround){
+			ball.body.applyLinearImpulse(-0.001f, 0f, ballX, ballY, true);
+		}
+	}
+
+	private void moveBodies() {
+		if (realGame) {
+			controller.checkMovement(player);
+		} else {
+			playerBrain.MoveNpcAggressive();
+		}
+		computerBrain.MoveNpcAggressive();
+
+		checkBallSquished();
 	}
 
 	/**
@@ -340,6 +379,7 @@ public class Game extends ApplicationAdapter {
 	 *            SpriteBatch
 	 */
 	private void drawAll(SpriteBatch batch) {
+		batch.draw(background, -Constants.SCREEN_WIDTH / 2, -Constants.SCREEN_HEIGHT / 2);
 		player.draw(batch);
 		computer.draw(batch);
 		ball.draw(batch);
@@ -359,9 +399,19 @@ public class Game extends ApplicationAdapter {
 	}
 
 	public void checkForReset() {
+		checkForWin();
+
 		if (flaggedForReset) {
 			resetPositions();
 			flaggedForReset = false;
+		}
+	}
+
+	public void checkForWin() {
+		if (playerScore.score >= scoreLimit) {
+			myGameCallBack.startActivity();
+		} else if (computerScore.score >= scoreLimit) {
+			myGameCallBack.startActivity();
 		}
 	}
 }

@@ -7,6 +7,8 @@ import com.badlogic.gdx.InputProcessor;
 public class Controller implements InputProcessor {
 
 	boolean keyPressed_D = false, keyPressed_A = false, keyPressed_R = false, keyPressed_Space = false;
+	Physics physics;
+	Ball ball;
 
 	float graphicsWidth, graphicsHeight;
 
@@ -15,6 +17,7 @@ public class Controller implements InputProcessor {
 
 		graphicsHeight = Gdx.graphics.getHeight();
 		graphicsWidth = Gdx.graphics.getWidth();
+		physics = new Physics();
 	}
 
 	public void checkMovement(Slime slime) {
