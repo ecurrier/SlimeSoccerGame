@@ -65,6 +65,7 @@ public class Game extends ApplicationAdapter {
 		world = new World(new Vector2(0, -3f), true);
 		controller = new Controller();
 		soundEffects = new SoundEffects();
+		soundEffects.CrowdStart();
 		camera = new OrthographicCamera(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
 
 		createBodies();

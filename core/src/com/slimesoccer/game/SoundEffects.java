@@ -38,7 +38,7 @@ public class SoundEffects {
 		int index = ThreadLocalRandom.current().nextInt(0, crowdSounds.length);
 		currentCrowdSound = crowdSounds[index];
 		
-		currentCrowdId = currentCrowdSound.play(1.0f);
+		currentCrowdId = currentCrowdSound.play(0.25f);
 		currentCrowdSound.setLooping(currentCrowdId, true);
 	}
 	
