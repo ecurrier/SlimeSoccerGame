@@ -28,6 +28,7 @@ public class Game extends ApplicationAdapter {
 	NpcBrain computerBrain, playerBrain;
 	Ball ball;
 	Goal playerGoal, computerGoal;
+	SoundEffects soundEffects;
 
 	Score playerScore, computerScore;
 	int scoreLimit = 5;
@@ -63,6 +64,7 @@ public class Game extends ApplicationAdapter {
 		batch = new SpriteBatch();
 		world = new World(new Vector2(0, -3f), true);
 		controller = new Controller();
+		soundEffects = new SoundEffects();
 		camera = new OrthographicCamera(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
 
 		createBodies();
@@ -119,6 +121,7 @@ public class Game extends ApplicationAdapter {
 
 			@Override
 			public void beginContact(Contact contact) {
+				// Airborne checks
 				if (collision(contact, "ground", "player")) {
 					player.airborne = false;
 				}
@@ -127,23 +130,28 @@ public class Game extends ApplicationAdapter {
 					computer.airborne = false;
 				}
 
+				// Score checks
 				if (collision(contact, "ball", "playergoal")) {
 					computerScore.incrementScore();
 					flaggedForReset = true;
 				}
-
 				if (collision(contact, "ball", "computergoal")) {
 					playerScore.incrementScore();
 					flaggedForReset = true;
 				}
+				
+				// Ball Stuck checks
 				if (collision(contact, "ball", "player")) {
 					ballUnderPlayer = true;
+					soundEffects.SlimeContact();
 				}
 				if (collision(contact, "ball", "computer")) {
 					ballUnderComputer = true;
+					soundEffects.SlimeContact();
 				}
 				if (collision(contact, "ball", "ground")) {
 					ballOnGround = true;
+					soundEffects.BallBounce();
 				}
 			}
 
@@ -357,7 +365,6 @@ public class Game extends ApplicationAdapter {
 	/**
 	 * Displays a parabolic trajectory for the ball when enabled
 	 */
-	@SuppressWarnings("unused")
 	private void displayBallTrajectory() {
 		for (int n = 1; n <= 32; n++) {
 			float t = 6f / 60f;
