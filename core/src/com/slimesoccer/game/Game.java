@@ -25,9 +25,8 @@ public class Game extends ApplicationAdapter {
 	OrthographicCamera camera;
 
 	Slime player, computer;
-
+	NpcBrain computerBrain, playerBrain;
 	Ball ball;
-
 	Goal playerGoal, computerGoal;
 
 	Score playerScore, computerScore;
@@ -35,15 +34,11 @@ public class Game extends ApplicationAdapter {
 
 	Boundary[] boundaries = new Boundary[4];
 
-	NpcBrain computerBrain, playerBrain;
-
 	Box2DDebugRenderer debugRenderer;
 	Matrix4 debugMatrix;
+	GameOptions options;
 
-	Texture dot;
-	Sprite trajectoryDot;
-
-	Sprite background;
+	Sprite trajectoryDot, background;
 
 	boolean flaggedForReset = false, realGame = false, ballUnderPlayer = false, ballUnderComputer = false,
 			ballOnGround = false;
@@ -58,8 +53,9 @@ public class Game extends ApplicationAdapter {
 		myGameCallBack = callBack;
 	}
 
-	public Game(boolean realGame, String difficulty) {
+	public Game(boolean realGame, GameOptions options) {
 		this.realGame = realGame;
+		this.options = options;
 	}
 
 	@Override
@@ -102,6 +98,9 @@ public class Game extends ApplicationAdapter {
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 		drawAll(batch);
+		if(options != null && options.showTrajectory){
+			displayBallTrajectory();
+		}
 		batch.end();
 	}
 

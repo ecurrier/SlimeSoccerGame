@@ -14,11 +14,9 @@ public class AndroidLauncher extends AndroidApplication implements Game.MyGameCa
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
 
 		Bundle extras = getIntent().getExtras();
-		String difficulty = extras.getString("difficulty");
-		
-		Boolean showTrajectory = extras.getBoolean("showTrajectory");
+		GameOptions options = new GameOptions(extras.getString("difficulty"), extras.getBoolean("showTrajectory"));
 
-		Game game = new Game(true, difficulty);
+		Game game = new Game(true, options);
 		game.setMyGameCallBack(this);
 		
 		initialize(game, config);

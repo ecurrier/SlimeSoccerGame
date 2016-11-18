@@ -14,6 +14,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.ViewAnimator;
 
 public class MainMenuActivity extends AndroidApplication implements OnClickListener {
@@ -36,14 +37,13 @@ public class MainMenuActivity extends AndroidApplication implements OnClickListe
 	}
 	
 	public void initializeOptions(){
-		RadioButton showTrajectoryYes = (RadioButton) findViewById(R.id.showTrajectoryYes);
-		RadioButton showTrajectoryNo = (RadioButton) findViewById(R.id.showTrajectoryNo);
+		RadioGroup radioGroup = (RadioGroup) findViewById(R.id.showTrajectoryGroup);
 		
 		if(sharedPreferences.getBoolean("com.slimesoccer.game.showTrajectory", true)){
-			showTrajectoryYes.setChecked(true);
+			radioGroup.check(R.id.showTrajectoryYes);
 		}
 		else{
-			showTrajectoryNo.setChecked(true);
+			radioGroup.check(R.id.showTrajectoryNo);
 		}
 	}
 
