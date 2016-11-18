@@ -46,9 +46,9 @@ public class Game extends ApplicationAdapter {
 	Sprite background;
 
 	boolean flaggedForReset = false;
-	boolean realGame = false;
+	boolean realGame = false; // Flag to determine if a 'real' game is occurring. If false, then it is most likely executing a game between two AI for the menu background.
 
-	public Game(boolean realGame) {
+	public Game(boolean realGame, String difficulty) {
 		this.realGame = realGame;
 	}
 

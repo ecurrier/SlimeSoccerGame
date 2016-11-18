@@ -3,7 +3,9 @@ package com.slimesoccer.game;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -11,6 +13,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.RadioButton;
 import android.widget.ViewAnimator;
 
 public class MainMenuActivity extends AndroidApplication implements OnClickListener {
@@ -18,19 +21,30 @@ public class MainMenuActivity extends AndroidApplication implements OnClickListe
 	ViewAnimator viewAnimator;
 	Animation slideLeft, slideRight;
 	Button startButton, optionsButton, easyButton, normalButton, hardButton;
-	OnClickListener clickListener = new OnClickListener() {
-		public void onClick(View v) {
-
-		}
-	};
+	SharedPreferences sharedPreferences;
 
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
 		initialize(listener);
+		
+		sharedPreferences = this.getSharedPreferences("com.slimesoccer.game", Context.MODE_PRIVATE);
 
+		initializeOptions();
 		initializeLayout();
 		initializeAnimations();
 		initializeButtons();
+	}
+	
+	public void initializeOptions(){
+		RadioButton showTrajectoryYes = (RadioButton) findViewById(R.id.showTrajectoryYes);
+		RadioButton showTrajectoryNo = (RadioButton) findViewById(R.id.showTrajectoryNo);
+		
+		if(sharedPreferences.getBoolean("com.slimesoccer.game.showTrajectory", true)){
+			showTrajectoryYes.setChecked(true);
+		}
+		else{
+			showTrajectoryNo.setChecked(true);
+		}
 	}
 
 	public void initializeAnimations() {
@@ -43,7 +57,7 @@ public class MainMenuActivity extends AndroidApplication implements OnClickListe
 		FrameLayout layout = new FrameLayout(this);
 
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
-		View gameView = initializeForView(new Game(false), config);
+		View gameView = initializeForView(new Game(false, null), config);
 
 		View view = getLayoutInflater().inflate(R.layout.mainmenulayout, null);
 
@@ -69,6 +83,7 @@ public class MainMenuActivity extends AndroidApplication implements OnClickListe
 	public void launchGame(String difficulty) {
 		Intent intent = new Intent(MainMenuActivity.this, AndroidLauncher.class);
 		intent.putExtra("difficulty", difficulty);
+		intent.putExtra("showTrajectory", sharedPreferences.getBoolean("com.slimesoccer.game.showTrajectory", true));
 		startActivity(intent);
 	}
 
@@ -77,15 +92,33 @@ public class MainMenuActivity extends AndroidApplication implements OnClickListe
 		if (v == startButton) {
 			viewAnimator.showNext();
 		} else if (v == optionsButton) {
-			launchGame("easy");
+			viewAnimator.showNext();
+			viewAnimator.showNext();
 		} else if (v == easyButton) {
-			launchGame("normal");
+			launchGame("easy");
 		} else if (v == normalButton) {
-			launchGame("hard");
+			launchGame("normal");
 		} else if (v == hardButton) {
-
+			launchGame("hard");
 		}
 
+	}
+	
+	public void onTrajectoryButtonClicked(View v) {
+	    boolean checked = ((RadioButton)v).isChecked();
+
+	    switch(v.getId()) {
+	        case R.id.showTrajectoryYes:
+	            if (checked){
+	            	sharedPreferences.edit().putBoolean("com.slimesoccer.game.showTrajectory", true);
+	            }
+	            break;
+	        case R.id.showTrajectoryNo:
+	            if (checked){
+	            	sharedPreferences.edit().putBoolean("com.slimesoccer.game.showTrajectory", false);
+	            }
+	            break;
+	    }
 	}
 
 }

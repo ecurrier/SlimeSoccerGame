@@ -14,7 +14,9 @@ public class AndroidLauncher extends AndroidApplication {
 
 		Bundle extras = getIntent().getExtras();
 		String difficulty = extras.getString("difficulty");
+		
+		Boolean showTrajectory = extras.getBoolean("showTrajectory");
 
-		initialize(new Game(true), config);
+		initialize(new Game(true, difficulty), config);
 	}
 }
