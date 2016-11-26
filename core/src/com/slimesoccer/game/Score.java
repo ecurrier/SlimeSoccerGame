@@ -74,5 +74,9 @@ public class Score {
 		layout.setText(font, name);
 		fontWidth = layout.width;
 	}
-
+	
+	public void resetScore() {
+		score = 0;
+		setName(score);
+	}
 }

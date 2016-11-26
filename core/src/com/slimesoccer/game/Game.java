@@ -33,9 +33,9 @@ public class Game extends ApplicationAdapter {
 	SoundEffects soundEffects;
 
 	Score playerScore, computerScore;
-	int scoreLimit = 5;
+	int scoreLimit = 5, currentCountDownTime;
 
-	Text gameOverText, three, two, one, countDownText;
+	Text gameOverText, countDownText;
 
 	Boundary[] boundaries = new Boundary[4];
 
@@ -46,7 +46,7 @@ public class Game extends ApplicationAdapter {
 	Sprite trajectoryDot, background;
 
 	boolean flaggedForReset = false, realGame = false, ballUnderPlayer = false, ballUnderComputer = false,
-			ballOnGround = false, drawThree = false, drawTwo = false, drawOne = false;
+			ballOnGround = false, drawCountDownTime = false;
 
 	public enum State {
 		PAUSE, RUN, RESUME, STOPPED
@@ -94,10 +94,6 @@ public class Game extends ApplicationAdapter {
 		background = new Sprite(new Texture(Gdx.files.internal("Models/background-day.png")));
 
 		setContactListener();
-
-		three = new Text("3");
-		two = new Text("2");
-		one = new Text("1");
 	}
 
 	@Override
@@ -109,14 +105,16 @@ public class Game extends ApplicationAdapter {
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		checkDurations();
-		moveBodies();
-		adjustBodySpritePositions();
+		if (state == State.RUN) {
+			checkDurations();
+			moveBodies();
+			adjustBodySpritePositions();
+		}
 
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 		drawAll(batch);
-		if(options != null && options.showTrajectory){
+		if (options != null && options.showTrajectory) {
 			displayBallTrajectory();
 		}
 		batch.end();
@@ -155,7 +153,7 @@ public class Game extends ApplicationAdapter {
 					playerScore.incrementScore();
 					flaggedForReset = true;
 				}
-				
+
 				// Ball Stuck checks
 				if (collision(contact, "ball", "player")) {
 					ballUnderPlayer = true;
@@ -412,13 +410,11 @@ public class Game extends ApplicationAdapter {
 			computerScore.draw(batch);
 		}
 
-		if (drawOne) {
-			one.font.draw(batch, one.message, one.x, one.y);
-		} else if (drawTwo) {
-			two.font.draw(batch, two.message, two.x, two.y);
-		} else if (drawThree) {
-			three.font.draw(batch, three.message, three.x, three.y);
+		if(drawCountDownTime){
+			Text countDown = new Text(Integer.toString(currentCountDownTime));
+			countDown.font.draw(batch, countDown.message, countDown.x, countDown.y);
 		}
+		
 		if (state == State.STOPPED) {
 			drawGameOverText();
 		}
@@ -444,10 +440,8 @@ public class Game extends ApplicationAdapter {
 	public void resetGame() {
 		if (Gdx.app.getType() == ApplicationType.Desktop) {
 			state = State.RUN;
-			playerScore.score = -1;
-			playerScore.incrementScore();
-			computerScore.score = -1;
-			computerScore.incrementScore();
+			playerScore.resetScore();
+			computerScore.resetScore();
 		} else if (Gdx.app.getType() == ApplicationType.Android) {
 			myGameCallBack.startActivity();
 		}
@@ -475,8 +469,13 @@ public class Game extends ApplicationAdapter {
 		countDownTimer(5);
 	}
 
+	/**
+	 * Initializes a countdown after a goal has been scored. Play will resume as normal after the countdown has finished.
+	 * @param time Number in seconds the countdown should run for.
+	 */
 	public void countDownAfterGoal(final int time) {
 
+		currentCountDownTime = time;
 		timeStep = 0f;
 		state = State.PAUSE;
 		new Thread(new Runnable() {
@@ -491,20 +490,15 @@ public class Game extends ApplicationAdapter {
 							timerRunning = false;
 							timeStep = 1f / 60f;
 							state = State.RUN;
-							drawThree = false;
-							drawTwo = false;
-							drawOne  = false;
+							drawCountDownTime = false;
 							return;
-						} else if (threadTime == 3) {
-							drawThree = true;
-						} else if (threadTime == 2) {
-							drawTwo = true;
-						} else if (threadTime == 1) {
-							drawOne = true;
+						} else {
+							drawCountDownTime = true;
 						}
 
 						threadTime--;
 						Thread.sleep(1000);
+						currentCountDownTime--;
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -515,6 +509,10 @@ public class Game extends ApplicationAdapter {
 		}).start();
 	}
 
+	/**
+	 * Starts a countdown timer after a player has scored the winning goal. The game will reset after the countdown is finished.
+	 * @param time Number in seconds the timer should run for
+	 */
 	public void countDownTimer(final int time) {
 
 		timeStep = 0f;
