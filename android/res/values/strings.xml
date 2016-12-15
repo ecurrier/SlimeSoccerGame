@@ -2,5 +2,6 @@
 <resources>
 
     <string name="app_name">slime-soccer-game</string>
+    <string name="banner_ad_unit_id">ca-app-pub-2698355908852800/7447793779</string>
 
 </resources>

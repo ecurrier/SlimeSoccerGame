@@ -17,12 +17,20 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.ViewAnimator;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.MobileAds;
+
 public class MainMenuActivity extends AndroidApplication implements OnClickListener {
 
 	ViewAnimator viewAnimator;
 	Animation slideLeft, slideRight;
 	Button startButton, optionsButton, easyButton, normalButton, hardButton;
 	SharedPreferences sharedPreferences;
+	
+	InterstitialAd mInterstitialAd;
 
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
@@ -34,7 +42,27 @@ public class MainMenuActivity extends AndroidApplication implements OnClickListe
 		initializeLayout();
 		initializeAnimations();
 		initializeButtons();
+		
+		mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId("ca-app-pub-2698355908852800/7447793779");
+        
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                requestNewInterstitial();
+            }
+        });
+
+        requestNewInterstitial();
 	}
+	
+	private void requestNewInterstitial() {
+        AdRequest adRequest = new AdRequest.Builder()
+        		.addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+        		.build();
+        
+        mInterstitialAd.loadAd(adRequest);
+    }
 	
 	public void initializeOptions(){
 		RadioGroup radioGroup = (RadioGroup) findViewById(R.id.showTrajectoryGroup);
@@ -81,10 +109,14 @@ public class MainMenuActivity extends AndroidApplication implements OnClickListe
 	}
 
 	public void launchGame(String difficulty) {
-		Intent intent = new Intent(MainMenuActivity.this, AndroidLauncher.class);
-		intent.putExtra("difficulty", difficulty);
-		intent.putExtra("showTrajectory", sharedPreferences.getBoolean("com.slimesoccer.game.showTrajectory", true));
-		startActivity(intent);
+		if (mInterstitialAd.isLoaded()) {
+            mInterstitialAd.show();
+        } else {
+        	Intent intent = new Intent(MainMenuActivity.this, AndroidLauncher.class);
+    		intent.putExtra("difficulty", difficulty);
+    		intent.putExtra("showTrajectory", sharedPreferences.getBoolean("com.slimesoccer.game.showTrajectory", true));
+    		startActivity(intent);
+        }
 	}
 
 	@Override
