@@ -7,6 +7,8 @@ import com.badlogic.gdx.audio.Sound;
 
 public class SoundEffects {
 
+	Boolean soundEnabled;
+	
 	Sound bounce1 = Gdx.audio.newSound(Gdx.files.internal("Sounds/ball-bounce1.wav"));
 	Sound bounce2 = Gdx.audio.newSound(Gdx.files.internal("Sounds/ball-bounce2.wav"));
 	Sound slime1 = Gdx.audio.newSound(Gdx.files.internal("Sounds/slime-contact1.wav"));
@@ -20,21 +22,33 @@ public class SoundEffects {
 	Sound currentCrowdSound;
 	long currentCrowdId;
 	
-	public SoundEffects() {
-		
+	public SoundEffects(Boolean soundEnabled) {
+		this.soundEnabled = soundEnabled;
 	}
 	
 	public void BallBounce() {
+		if(!soundEnabled) {
+			return;
+		}
+		
 		int index = ThreadLocalRandom.current().nextInt(0, bounceSounds.length);
 		bounceSounds[index].play(1.0f);
 	}
 	
 	public void SlimeContact() {
+		if(!soundEnabled) {
+			return;
+		}
+		
 		int index = ThreadLocalRandom.current().nextInt(0, slimeSounds.length);
 		slimeSounds[index].play(1.0f);
 	}
 	
 	public void CrowdStart() {
+		if(!soundEnabled) {
+			return;
+		}
+		
 		int index = ThreadLocalRandom.current().nextInt(0, crowdSounds.length);
 		currentCrowdSound = crowdSounds[index];
 		
@@ -43,6 +57,10 @@ public class SoundEffects {
 	}
 	
 	public void CrowdStop() {
+		if(!soundEnabled) {
+			return;
+		}
+		
 		currentCrowdSound.stop(currentCrowdId);
 	}
 }

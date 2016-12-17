@@ -74,7 +74,7 @@ public class Game extends ApplicationAdapter {
 		batch = new SpriteBatch();
 		world = new World(new Vector2(0, -3f), true);
 		controller = new Controller();
-		soundEffects = new SoundEffects();
+		soundEffects = new SoundEffects(options != null ? options.playSound : true);
 		soundEffects.CrowdStart();
 		camera = new OrthographicCamera(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
 		timeStep = 1f / 60f;
