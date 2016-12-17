@@ -57,12 +57,40 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
+            android:background="#88000000"
             android:weightSum="3" >
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1" />
+                android:layout_weight="1"/>
+            
+            <RelativeLayout 
+                android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:orientation="horizontal">
+	            
+                <Button
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_alignParentLeft="true"
+	                android:layout_margin="5sp"
+	                android:paddingLeft="30sp"
+	                android:paddingRight="30sp"
+	                android:text="Back"
+	                android:onClick="onBackButtonClicked"/>
+	            
+	            <TextView
+			        android:layout_width="match_parent"
+			        android:layout_height="wrap_content"
+			        android:shadowColor="#000000"
+			        android:shadowRadius="10"
+			        android:text="Choose A Difficulty"
+			        android:textColor="#ffffff"
+			        android:textSize="48sp"
+			        android:gravity="center"/>
+                
+            </RelativeLayout>
 
             <Button
                 android:id="@+id/easyButton"
@@ -98,15 +126,42 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/black"
-            android:alpha="0.5"
+            android:background="#88000000"
             android:orientation="vertical"
-            android:weightSum="2" >
+            android:weightSum="5" >
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1" />
+            
+            <RelativeLayout 
+                android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:orientation="horizontal"
+	            android:layout_weight="2">
+	            
+	            <Button
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_alignParentLeft="true"
+	                android:layout_margin="5sp"
+	                android:paddingLeft="30sp"
+	                android:paddingRight="30sp"
+	                android:text="Back"
+	                android:onClick="onBackButtonClicked"/>
+	            
+	            <TextView
+			        android:layout_width="match_parent"
+			        android:layout_height="wrap_content"
+			        android:gravity="center"
+			        android:shadowColor="#000000"
+			        android:shadowRadius="10"
+			        android:text="Options Menu"
+			        android:textColor="#ffffff"
+			        android:textSize="48sp"/>
+            
+            </RelativeLayout>
             
             <TextView
 		        android:layout_width="wrap_content"

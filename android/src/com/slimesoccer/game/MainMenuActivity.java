@@ -162,5 +162,8 @@ public class MainMenuActivity extends AndroidApplication implements OnClickListe
 	    
 	    editor.commit();
 	}
-
+	
+	public void onBackButtonClicked(View v) {
+		viewAnimator.setDisplayedChild(0);
+	}
 }

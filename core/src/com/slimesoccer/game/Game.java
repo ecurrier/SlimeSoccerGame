@@ -151,12 +151,14 @@ public class Game extends ApplicationAdapter {
 						computerScore.incrementScore();
 					}
 					flaggedForReset = true;
+					soundEffects.GoalScore();
 				}
 				if (collision(contact, "ball", "computergoal")) {
 					if(realGame) {
 						playerScore.incrementScore();
 					}
 					flaggedForReset = true;
+					soundEffects.GoalScore();
 				}
 
 				// Ball Stuck checks
@@ -496,6 +498,7 @@ public class Game extends ApplicationAdapter {
 							timeStep = 1f / 60f;
 							state = State.RUN;
 							drawCountDownTime = false;
+							soundEffects.RoundBegin();
 							return;
 						} else {
 							drawCountDownTime = true;
