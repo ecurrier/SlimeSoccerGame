@@ -7,17 +7,6 @@
     android:orientation="vertical"
     tools:context=".MainMenuActivity" >
 
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:shadowColor="#000000"
-        android:shadowRadius="10"
-        android:text="Slime Soccer"
-        android:textColor="#ffffff"
-        android:textSize="72sp" />
-
     <ViewAnimator
         android:id="@+id/viewAnimator"
         android:layout_width="match_parent"
@@ -28,6 +17,17 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:weightSum="2" >
+            
+            <TextView
+		        android:id="@+id/title"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_gravity="center_horizontal"
+		        android:shadowColor="#000000"
+		        android:shadowRadius="10"
+		        android:text="Slime Soccer"
+		        android:textColor="#ffffff"
+		        android:textSize="72sp" />
 
             <View
                 android:layout_width="match_parent"
@@ -98,6 +98,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@android:color/black"
+            android:alpha="0.5"
             android:orientation="vertical"
             android:weightSum="2" >
 
@@ -106,27 +108,27 @@
                 android:layout_height="0dp"
                 android:layout_weight="1" />
             
+            <TextView
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_gravity="center_horizontal"
+		        android:shadowColor="#000000"
+		        android:shadowRadius="10"
+		        android:text="Show Ball Trajectory?"
+		        android:textColor="#ffffff"
+		        android:textSize="36sp"/>
+            
             <RadioGroup 
                 android:id="@+id/showTrajectoryGroup"
 			    android:layout_width="fill_parent"
 			    android:layout_height="wrap_content"
-			    android:orientation="vertical">
-			    
-                <TextView
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:layout_gravity="center_horizontal"
-			        android:shadowColor="#000000"
-			        android:shadowRadius="10"
-			        android:text="Show Ball Trajectory?"
-			        android:textColor="#ffffff"
-			        android:textSize="36sp"/>
+			    android:gravity="center"
+			    android:orientation="horizontal">
 			    
 		    	<RadioButton 
 		    	    android:id="@+id/showTrajectoryYes"
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
-			        android:layout_gravity="center_horizontal"
 			        android:text="Yes"
 			        android:onClick="onTrajectoryButtonClicked"/>
 		    	
@@ -134,32 +136,31 @@
 			        android:id="@+id/showTrajectoryNo"
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
-			        android:layout_gravity="center_horizontal"
 			        android:text="No"
 			        android:onClick="onTrajectoryButtonClicked"/>
 			</RadioGroup>
 			
+            <TextView
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_gravity="center_horizontal"
+		        android:shadowColor="#000000"
+		        android:shadowRadius="10"
+		        android:text="Enable Sound?"
+		        android:textColor="#ffffff"
+		        android:textSize="36sp"/>
+            
             <RadioGroup 
                 android:id="@+id/playSoundGroup"
 			    android:layout_width="fill_parent"
 			    android:layout_height="wrap_content"
-			    android:orientation="vertical">
-			    
-                <TextView
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:layout_gravity="center_horizontal"
-			        android:shadowColor="#000000"
-			        android:shadowRadius="10"
-			        android:text="Enable Sound?"
-			        android:textColor="#ffffff"
-			        android:textSize="36sp"/>
+			    android:gravity="center"
+			    android:orientation="horizontal">
 			    
 		    	<RadioButton 
 		    	    android:id="@+id/playSoundYes"
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
-			        android:layout_gravity="center_horizontal"
 			        android:text="On"
 			        android:onClick="onSoundButtonClicked"/>
 		    	
@@ -167,7 +168,6 @@
 			        android:id="@+id/playSoundNo"
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
-			        android:layout_gravity="center_horizontal"
 			        android:text="Off"
 			        android:onClick="onSoundButtonClicked"/>
 			</RadioGroup>

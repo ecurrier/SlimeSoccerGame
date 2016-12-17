@@ -117,7 +117,7 @@ public class MainMenuActivity extends AndroidApplication implements OnClickListe
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)  {
-	    if (keyCode == KeyEvent.KEYCODE_BACK ) {
+	    if (keyCode == KeyEvent.KEYCODE_BACK) {
 	        viewAnimator.setDisplayedChild(0);
 	        return true;
 	    }

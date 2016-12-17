@@ -3,6 +3,7 @@ package com.slimesoccer.game;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 
 public class SoundEffects {
@@ -13,13 +14,13 @@ public class SoundEffects {
 	Sound bounce2 = Gdx.audio.newSound(Gdx.files.internal("Sounds/ball-bounce2.wav"));
 	Sound slime1 = Gdx.audio.newSound(Gdx.files.internal("Sounds/slime-contact1.wav"));
 	Sound slime2 = Gdx.audio.newSound(Gdx.files.internal("Sounds/slime-contact2.wav"));
-	Sound crowd1 = Gdx.audio.newSound(Gdx.files.internal("Sounds/crowd1.mp3"));
+	Music crowd1 = Gdx.audio.newMusic(Gdx.files.internal("Sounds/crowd1.wav"));
 	
 	Sound[] bounceSounds = {bounce1, bounce2};
 	Sound[] slimeSounds = {slime1, slime2};
-	Sound[] crowdSounds = {crowd1};
+	Music[] crowdSounds = {crowd1};
 	
-	Sound currentCrowdSound;
+	Music currentCrowdSound;
 	long currentCrowdId;
 	
 	public SoundEffects(Boolean soundEnabled) {
@@ -52,8 +53,8 @@ public class SoundEffects {
 		int index = ThreadLocalRandom.current().nextInt(0, crowdSounds.length);
 		currentCrowdSound = crowdSounds[index];
 		
-		currentCrowdId = currentCrowdSound.play(0.25f);
-		currentCrowdSound.setLooping(currentCrowdId, true);
+		currentCrowdSound.play();
+		currentCrowdSound.setLooping(true);
 	}
 	
 	public void CrowdStop() {
@@ -61,6 +62,6 @@ public class SoundEffects {
 			return;
 		}
 		
-		currentCrowdSound.stop(currentCrowdId);
+		currentCrowdSound.stop();
 	}
 }

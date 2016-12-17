@@ -75,7 +75,6 @@ public class Game extends ApplicationAdapter {
 		world = new World(new Vector2(0, -3f), true);
 		controller = new Controller();
 		soundEffects = new SoundEffects(options != null ? options.playSound : true);
-		soundEffects.CrowdStart();
 		camera = new OrthographicCamera(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
 		timeStep = 1f / 60f;
 
@@ -94,6 +93,7 @@ public class Game extends ApplicationAdapter {
 		background = new Sprite(new Texture(Gdx.files.internal("Models/background-day.png")));
 
 		setContactListener();
+		soundEffects.CrowdStart();
 	}
 
 	@Override
@@ -125,6 +125,7 @@ public class Game extends ApplicationAdapter {
 		batch.dispose();
 		player.texture.dispose();
 		ball.texture.dispose();
+		soundEffects.CrowdStop();
 	}
 
 	/**
@@ -146,11 +147,15 @@ public class Game extends ApplicationAdapter {
 
 				// Score checks
 				if (collision(contact, "ball", "playergoal")) {
-					computerScore.incrementScore();
+					if(realGame) {
+						computerScore.incrementScore();
+					}
 					flaggedForReset = true;
 				}
 				if (collision(contact, "ball", "computergoal")) {
-					playerScore.incrementScore();
+					if(realGame) {
+						playerScore.incrementScore();
+					}
 					flaggedForReset = true;
 				}
 
