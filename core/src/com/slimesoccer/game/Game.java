@@ -450,6 +450,7 @@ public class Game extends ApplicationAdapter {
 			playerScore.resetScore();
 			computerScore.resetScore();
 		} else if (Gdx.app.getType() == ApplicationType.Android) {
+			dispose();
 			myGameCallBack.startActivity();
 		}
 	}
