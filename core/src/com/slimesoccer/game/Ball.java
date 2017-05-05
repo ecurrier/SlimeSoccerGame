@@ -61,6 +61,7 @@ public class Ball{
 	
 	public void reset(){
 		body.setLinearVelocity(0f, 0f);
+		body.setAngularVelocity(0f);
 		body.setTransform(startingPositionX, startingPositionY, body.getAngle());
 	}
 }
